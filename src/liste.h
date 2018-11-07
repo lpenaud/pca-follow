@@ -22,7 +22,7 @@ s_node * list_insert(s_node * head, void * data);
 
 s_node * list_append(s_node * head, void * data);
 
-int list_process(s_node * head, int (*fct)(s_node * node, void * param), 
+int list_process(s_node * head, int (*fct)(s_node * node, void * param),
     void * param, s_node ** last);
 // Application d'une fonction sur les données enregistrées
 // dans la list. last est le dernier noeud traité
@@ -39,9 +39,8 @@ s_node * list_headRemove(s_node * head);
 // suppression de la première instance d'une
 // donnée dans la list, retourne la tête de list
 
-void list_destroy(s_node * head);
+s_node * list_destroy(s_node * head);
 // destruction d'une list
 // (La liberation des données n'est pas prise en charge)
 
 #endif
-

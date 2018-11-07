@@ -14,7 +14,7 @@ void * list_get_data(s_node * node)
 
 void list_set_data(s_node * node, void * data)
 {
-    node->data = data; 
+    node->data = data;
 }
 
 s_node * list_insert(s_node * head, void * data)
@@ -41,14 +41,14 @@ s_node * list_append(s_node * head, void * data)
     return head;
 }
 
-int list_process(s_node * head, int (*fct)(s_node * node, void * param), 
-    void * param, s_node ** last);
+int list_process(s_node * head, int (*fct)(s_node * node, void * param),
+    void * param, s_node ** last)
+{
+    return 0;
+}
 // Application d'une fonction sur les données enregistrées
 // dans la liste. last est le dernier noeud traité
 // retourne 1 sur le parcours est arrêté avant la fin de la liste
-
-s_node * list_insert_ordonne(s_node * head, int (*fct)(s_node * node, void * param),
-    void * param, s_node ** last);
 
 s_node * list_remove (s_node * head, void * data)
 {
@@ -65,16 +65,17 @@ s_node * list_remove (s_node * head, void * data)
     return head;
 }
 
-s_node * list_headRemove(s_node * head) {
+s_node * list_headRemove(s_node * head)
+{
     if (head == NULL) return head;
     s_node * n = head->next;
     free(head);
     return n;
 }
 
-void list_destroy(s_node * head) 
+s_node * list_destroy(s_node * head)
 {
-    if (head == NULL) return;
+    if (head == NULL) return head;
 
     s_node * node = head;
 
@@ -83,6 +84,5 @@ void list_destroy(s_node * head)
     }
 
     free(node);
-    // printf("%p\n", (void *) node); -> nil
+    return node;
 }
-
