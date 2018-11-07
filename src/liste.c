@@ -54,14 +54,15 @@ s_node * list_remove (s_node * head, void * data)
 {
     if (head == NULL) return head;
 
-    s_node * node;
-    
-    for (node = head; node->next != NULL; node = node->next) {
-        if (node->data == data) {
-            return list_headRemove(node);
+    for (s_node * node = head; node->next; node = node->next) {
+        if (node->next->data == data) {
+            s_node * n = node->next->next;
+            free(node->next);
+            node->next = n;
+            break;
         }
     }
-    
+
     return head;
 }
 
