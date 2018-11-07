@@ -2,14 +2,14 @@ DEBUG = true
 CC = gcc
 
 ifeq ($(DEBUG),true)
-	CFLAGS = -W -Wall -ansi -std=c99 -g -ggdb
+	CFLAGS = -W -Wall -ansi -std=c99 -Og
 	LDFLAGS =
 else
 	CFLAGS = -W -Wall -ansi -std=c99
 	LDFLAGS =
 endif
 
-EXEC = test_liste
+EXEC = test_liste.out
 DEPS = liste test_liste
 
 BIN = $(foreach dep, $(DEPS), bin/$(dep).o)
@@ -22,7 +22,7 @@ else
 	@echo "Génération en mode release"
 endif
 
-test_liste: $(BIN)
+test_liste.out: $(BIN)
 	$(CC) -o $@ $^ $(LDFLAGS)
 
 bin/liste.o: src/liste.h
@@ -31,5 +31,5 @@ bin/%.o: src/%.c
 	$(CC) -o $@ -c $< $(CFLAGS)
 
 clean:
-	rm bin/*.o
-	rm $(EXEC)
+	-rm bin/*.o
+	-rm $(EXEC)
