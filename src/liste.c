@@ -45,15 +45,18 @@ s_node * list_append(s_node * head, void * data)
 int list_process(s_node * head, int (*fct)(s_node * node, void * param),
     void * param, s_node ** last)
 {
-    return 0;
+    if (!head) return 0;
+
+    s_node * node;
+    for (node = head; node != last[0]->next; node = node->next) {
+        fct(node, param);
+    }
+    return node ? 1 : 0;
 }
-// Application d'une fonction sur les données enregistrées
-// dans la liste. last est le dernier noeud traité
-// retourne 1 sur le parcours est arrêté avant la fin de la liste
 
 s_node * list_remove (s_node * head, void * data)
 {
-    if (head == NULL) return head;
+    if (!head) return head;
 
     for (s_node * node = head; node->next; node = node->next) {
         if (node->next->data == data) {
@@ -77,11 +80,11 @@ s_node * list_headRemove(s_node * head)
 
 s_node * list_destroy(s_node * head)
 {
-    if (head == NULL) return head;
+    if (!head) return head;
 
     s_node * node = head;
 
-    while (node != NULL) {
+    while (node) {
         node = list_headRemove(node);
     }
 
