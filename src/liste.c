@@ -27,15 +27,16 @@ s_node * list_insert(s_node * head, void * data)
 
 s_node * list_append(s_node * head, void * data)
 {
-    if (head == NULL) return list_insert(head, data);
+    if (!head) return list_insert(head, data);
 
     s_node * node = head;
 
-    while (node->next != NULL) {
+    while (node->next) {
         node = node->next;
     }
 
     node->next = (s_node *) malloc(sizeof(s_node));
+    node->next->next = list_create();
     list_set_data(node->next, data);
 
     return head;
@@ -68,7 +69,7 @@ s_node * list_remove (s_node * head, void * data)
 
 s_node * list_headRemove(s_node * head)
 {
-    if (head == NULL) return head;
+    if (!head) return head;
     s_node * n = head->next;
     free(head);
     return n;
