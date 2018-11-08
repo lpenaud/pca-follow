@@ -8,16 +8,16 @@
 
 int random(const int max)
 {
-    return rand() % max;
+    return rand() % (max + 1);
 }
 
 void printf_template(const char * name_test, const char ch) {
     const char prefix[] = "Test";
     const int len = strlen(prefix) + strlen(name_test) + 1;
-    const int nb_ch = (CPL - len) / 2;
+    const unsigned int nb_ch = (CPL - len) / 2;
 
     putchar('\n');
-    for (int i = 0; i <= CPL; i++) {
+    for (unsigned int i = 0; i <= CPL; i++) {
         if (i == nb_ch) {
             printf("%s %s", prefix, name_test);
             i += len;
@@ -50,8 +50,13 @@ unsigned int calc_length(s_node * node)
 }
 
 int process_produit(s_node * node, void * param) {
-    printf("\t%d\n", *(int *)node->data);
-    return 0;
+    int data = *(int *)(node->data), nb = *(int *)(param);
+
+    *(int *)(node->data) = *(int *)node->data * nb;
+    printf("\t\t- %d * %d = %d\n", data, nb, *(int *)(node->data));
+    assert(data * nb == *(int *)(node->data));
+
+    return *(int *)(node->data);
 }
 
 s_node * test_insert(s_node * node, int tab[], const unsigned int len, const unsigned int max)
@@ -66,7 +71,7 @@ s_node * test_insert(s_node * node, int tab[], const unsigned int len, const uns
         node = list_insert(node, (tab + i));
     }
     new_length = calc_length(node);
-    printf("\n\tTaille : \n\t\t* Ancienne %d\n\t\t* Nouvelle %d\n", length, new_length);
+    printf("\n\tTaille : \n\t\t- Ancienne %d\n\t\t- Nouvelle %d\n", length, new_length);
 
     assert(len + length == calc_length(node));
     afficher_s_node(node);
@@ -85,7 +90,7 @@ s_node * test_append(s_node * node, int tab[], const unsigned int len, const uns
         node = list_append(node, (tab + i));
     }
     new_length = calc_length(node);
-    printf("\n\tTaille : \n\t\t* Ancienne %d\n\t\t* Nouvelle %d\n", length, new_length);
+    printf("\n\tTaille : \n\t\t- Ancienne %d\n\t\t- Nouvelle %d\n", length, new_length);
 
     assert(len + length == new_length);
     afficher_s_node(node);
@@ -93,11 +98,22 @@ s_node * test_append(s_node * node, int tab[], const unsigned int len, const uns
 }
 
 void test_process(s_node * node) {
-    int nb = 2, res;
+    unsigned int nb = 2, res;
+    s_node * last = node;
 
     printf_template("process", '-');
-    res = list_process(node, &process_produit, &nb, &(node->next->next->next->next->next));
-    assert(res != 1);
+    if (node) {
+        while (last->next->next) {
+            last = last->next;
+        }
+        printf("\tLast avant la fin de la list\n");
+        res = list_process(node, &process_produit, &nb, &last);
+        assert(res == 1);
+        last = last->next;
+    }
+    printf("\tLast est la fin de la liste\n");
+    res = list_process(node, &process_produit, &nb, &last);
+    assert(res == 0);
 }
 
 s_node * test_remove(s_node * node, int data[], const unsigned int len, const unsigned int count)
@@ -112,7 +128,7 @@ s_node * test_remove(s_node * node, int data[], const unsigned int len, const un
         node = list_remove(node, (void *)ptn);
     }
     new_length = calc_length(node);
-    printf("\n\tTaille : \n\t\t* Ancienne %d\n\t\t* Nouvelle %d\n", length, new_length);
+    printf("\n\tTaille : \n\t\t- Ancienne %d\n\t\t- Nouvelle %d\n", length, new_length);
 
     assert((length == 0 && new_length == 0) || length > new_length);
     afficher_s_node(node);
@@ -130,7 +146,7 @@ s_node * test_headRemove(s_node * node, const unsigned int count)
         node = list_headRemove(node);
     }
     new_length = calc_length(node);
-    printf("\n\tTaille : \n\t\t* Ancienne %d\n\t\t* Nouvelle %d\n", length, new_length);
+    printf("\n\tTaille : \n\t\t- Ancienne %d\n\t\t- Nouvelle %d\n", length, new_length);
 
     assert((length == 0 && new_length == 0) || length - count == calc_length(node));
     afficher_s_node(node);
@@ -159,7 +175,8 @@ int main(void)
 
     list = test_insert(list, to_insert, len, 50);
     list = test_append(list, to_append, len, 20);
-    list = test_remove(list, to_insert, len, random(len));
+    test_process(list);
+    list = test_remove(list, to_append, len, random(len));
     list = test_headRemove(list, len / 2);
     test_destroy(list);
 
@@ -170,6 +187,8 @@ int main(void)
     list_destroy(list);
 
     list = list_create();
+    test_process(list);
+
     test_remove(list, to_insert, 2, random(len));
     list_destroy(list);
 
