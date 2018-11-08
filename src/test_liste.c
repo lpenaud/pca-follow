@@ -30,7 +30,7 @@ void printf_template(const char * name_test) {
 
 void afficher_s_node(s_node * liste)
 {
-    printf("liste = [");
+    printf("\nliste = [");
     do {
         printf("%d,", *((int *)(liste->data)));
     } while((liste = liste->next));
@@ -38,75 +38,96 @@ void afficher_s_node(s_node * liste)
     return;
 }
 
-int calc_length(s_node * node)
+unsigned int calc_length(s_node * node)
 {
-    int i;
+    unsigned int i;
     for (i = 0; node; i++)
         node = node->next;
     return i;
 }
 
-s_node * test_insert(s_node * node, int tab[], const int len, const int max)
+int process_produit(s_node * node, void * param) {
+    printf("\t%d\n", *(int *)node->data);
+    return 0;
+}
+
+s_node * test_insert(s_node * node, int tab[], const unsigned int len, const unsigned int max)
 {
-    const int length = calc_length(node);
+    const unsigned int length = calc_length(node);
+    unsigned int new_length;
 
     printf_template("insert");
-    for (int i = 0; i < len; i++) {
+    for (unsigned int i = 0; i < len; i++) {
         tab[i] = random(max);
         printf("\t%d. Insertion du nombre %d\n", i, tab[i]);
         node = list_insert(node, (tab + i));
     }
+    new_length = calc_length(node);
+    printf("\n\tTaille : \n\t\t* Ancienne %d\n\t\t* Nouvelle %d\n", length, new_length);
 
     assert(len + length == calc_length(node));
     afficher_s_node(node);
     return node;
 }
 
-s_node * test_append(s_node * node, int tab[], const int len, const int max)
+s_node * test_append(s_node * node, int tab[], const unsigned int len, const unsigned int max)
 {
-    int length = calc_length(node);
+    const unsigned int length = calc_length(node);
+    unsigned int new_length;
 
     printf_template("append");
-    for (int i = 0; i < len; i++) {
+    for (unsigned int i = 0; i < len; i++) {
         tab[i] = random(max);
         printf("\t%d. Ajout du nombre %d\n", i, tab[i]);
         node = list_append(node, (tab + i));
     }
+    new_length = calc_length(node);
+    printf("\n\tTaille : \n\t\t* Ancienne %d\n\t\t* Nouvelle %d\n", length, new_length);
 
-    assert(len + length == calc_length(node));
+    assert(len + length == new_length);
     afficher_s_node(node);
     return node;
 }
 
+void test_process(s_node * node) {
+    int nb = 2, res;
 
-s_node * test_remove(s_node * node, int data[], const int len, const int count)
+    printf_template("process");
+    res = list_process(node, &process_produit, &nb, &(node->next->next->next->next->next));
+    assert(res != 1);
+}
+
+s_node * test_remove(s_node * node, int data[], const unsigned int len, const unsigned int count)
 {
-    const int length = calc_length(node);
-    int newLength;
+    const unsigned int length = calc_length(node);
+    unsigned int new_length;
 
     printf_template("remove");
-    for (int i = 0; i <= count; i++) {
+    for (unsigned int i = 0; i <= count; i++) {
         int * ptn = (data + random(len - 1));
         printf("\tSuppression du noeud ayant comme valeur %d\n", *ptn);
         node = list_remove(node, (void *)ptn);
     }
-    newLength = calc_length(node);
-    printf("\n\tTaille : \n\t\t* Ancienne %d\n\t\t* Nouvelle %d\n", length, newLength);
+    new_length = calc_length(node);
+    printf("\n\tTaille : \n\t\t* Ancienne %d\n\t\t* Nouvelle %d\n", length, new_length);
 
-    assert(length > newLength);
+    assert(length > new_length);
     afficher_s_node(node);
     return node;
 }
 
-s_node * test_headRemove(s_node * node, const int count)
+s_node * test_headRemove(s_node * node, const unsigned int count)
 {
-    const int length = calc_length(node);
+    const unsigned int length = calc_length(node);
+    unsigned int new_length;
 
     printf_template("headRemove");
-    for (int i = 0; i < count; i++) {
+    for (unsigned int i = 0; i < count; i++) {
         printf("\t%d. Suprression de %d\n", i, *(int *)(node->data));
         node = list_headRemove(node);
     }
+    new_length = calc_length(node);
+    printf("\n\tTaille : \n\t\t* Ancienne %d\n\t\t* Nouvelle %d\n", length, new_length);
 
     assert(length - count == calc_length(node));
     afficher_s_node(node);
@@ -127,7 +148,7 @@ void test_destroy(s_node * node) {
 
 int main(void)
 {
-    const int len = 10;
+    const unsigned int len = 10;
     s_node * liste = list_create();
     int to_insert[len], to_append[len];
 
