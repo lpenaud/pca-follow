@@ -9,7 +9,12 @@ else
 	LDFLAGS =
 endif
 
-EXEC = test_liste.out
+ifeq ($(OS),Windows_NT)
+	EXEC = test_liste.exe
+else
+	EXEC = test_liste.out
+endif
+
 DEPS = liste test_liste
 
 BIN = $(foreach dep, $(DEPS), bin/$(dep).o)
@@ -22,7 +27,7 @@ else
 	@echo "Génération en mode release"
 endif
 
-test_liste.out: $(BIN)
+$(EXEC): $(BIN)
 	$(CC) -o $@ $^ $(LDFLAGS)
 
 bin/liste.o: src/liste.h
