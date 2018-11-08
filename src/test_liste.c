@@ -142,7 +142,7 @@ s_node * test_headRemove(s_node * node, const unsigned int count)
 
     printf_template("headRemove", '-');
     for (unsigned int i = 0; i < count; i++) {
-        printf("\t%d. Suprression de %p\n", i, node);
+        printf("\t%d. Supression de %p\n", i, node);
         node = list_headRemove(node);
     }
     new_length = calc_length(node);
