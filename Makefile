@@ -1,7 +1,7 @@
-DEBUG = true
+ENV = ${C_ENV}
 CC = gcc
 
-ifeq ($(DEBUG),true)
+ifeq ($(ENV),DEBUG)
 	CFLAGS = -W -Wall -ansi -std=c99 -Og
 	LDFLAGS =
 else
@@ -21,8 +21,8 @@ BIN = $(foreach dep, $(DEPS), bin/$(dep).o)
 SRC = $(foreach dep, $(DEPS), src/$(dep).c)
 
 all: $(EXEC)
-ifeq ($(DEBUG),true)
-	@echo "Génération du mode debug"
+ifeq ($(ENV),DEBUG)
+	@echo "Génération du mode DEBUG"
 else
 	@echo "Génération en mode release"
 endif
