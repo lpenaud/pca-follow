@@ -28,7 +28,7 @@ int list_process(s_node * head, int (*fct)(s_node * node, void * param),
 // dans la list. last est le dernier noeud traité
 // retourne 1 sur le parcours est arrêté avant la fin de la list
 
-s_node * list_ordered_append(s_node * head, int (*fct)(s_node * node, void * param),
+s_node * list_ordered_append(s_node ** head, int (*fct)(s_node * node, void * param),
     void * param);
 
 s_node * list_remove (s_node * head, void * data);

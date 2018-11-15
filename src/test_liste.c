@@ -49,14 +49,24 @@ unsigned int calc_length(s_node * node)
     return i;
 }
 
-int process_produit(s_node * node, void * param) {
+int process_produit(s_node * node, void * param) 
+{
     int data = *(int *)(node->data), nb = *(int *)(param);
 
     *(int *)(node->data) = *(int *)node->data * nb;
     printf("\t\t- %d * %d = %d\n", data, nb, *(int *)(node->data));
     assert(data * nb == *(int *)(node->data));
 
-    return *(int *)(node->data);
+    return 0;
+}
+
+int tri_int(s_node * node, void * param)
+{
+    int data = *(int *) node->data;
+    int nb = *(int *) param;
+    if (data > nb) return -1;
+    if (data < nb) return 1;
+    return 0;
 }
 
 s_node * test_insert(s_node * node, int tab[], const unsigned int len, const unsigned int max)
@@ -97,23 +107,37 @@ s_node * test_append(s_node * node, int tab[], const unsigned int len, const uns
     return node;
 }
 
-void test_process(s_node * node) {
-    unsigned int nb = 2, res;
-    s_node * last = node;
+s_node * test_process(s_node * node) {
+    unsigned int res, nb = 2;
 
     printf_template("process", '-');
-    if (node) {
-        while (last->next->next) {
-            last = last->next;
-        }
-        printf("\tLast avant la fin de la list\n");
-        res = list_process(node, &process_produit, &nb, &last);
-        assert(res == 1);
-        last = last->next;
-    }
-    printf("\tLast est la fin de la liste\n");
-    res = list_process(node, &process_produit, &nb, &last);
+    printf("Liste original");
+
+    afficher_s_node(node);
+    res = list_process(node, &process_produit, &nb, &node);
+
+    printf("Nouvelle liste");
+    afficher_s_node(node);
+
     assert(res == 0);
+    return node;
+}
+
+s_node * test_ordered_append(s_node * node, const int tab[], const unsigned int len)
+{
+
+    printf_template("ordered_append", '-');
+    printf("Avant :");
+    afficher_s_node(node);
+
+    for(unsigned int i = len / 2; i < len; i++) {
+        printf("Insertion du nombre %d\n", nb);
+        node = list_ordered_append(&node, &tri_int, &nb);
+    }
+
+    printf("Après :");
+    afficher_s_node(node);
+    return node;
 }
 
 s_node * test_remove(s_node * node, int data[], const unsigned int len, const unsigned int count)
@@ -167,27 +191,36 @@ void test_destroy(s_node * node) {
 
 int main(void)
 {
-    const unsigned int len = 10;
+    const unsigned int len = 10, max = 50;
     s_node * list = list_create();
     int to_insert[len], to_append[len];
 
     printf_template("liste non null", '=');
 
-    list = test_insert(list, to_insert, len, 50);
-    list = test_append(list, to_append, len, 20);
-    test_process(list);
+    list = test_insert(list, to_insert, len, max);
+    list = test_append(list, to_append, len, max);
+    list = test_process(list);
+    list = test_ordered_append(list, tab, len);
     list = test_remove(list, to_append, len, random(len));
     list = test_headRemove(list, len / 2);
     test_destroy(list);
+    
+    list = list_create();
+    list = list_insert(list, -1);
+    list = test_ordered_append(list, tab, len);
 
     printf_template("liste null", '=');
 
+    test_destroy(list);
     list = list_create();
     test_append(list, to_append, 2, 20);
     list_destroy(list);
 
     list = list_create();
-    test_process(list);
+    list = test_process(list);
+
+    list = test_ordered_append(list);
+    list_destroy(list);
 
     test_remove(list, to_insert, 2, random(len));
     list_destroy(list);
