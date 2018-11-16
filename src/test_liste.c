@@ -49,7 +49,7 @@ unsigned int calc_length(s_node * node)
     return i;
 }
 
-int process_produit(s_node * node, void * param) 
+int process_produit(s_node * node, void * param)
 {
     int data = *(int *)(node->data), nb = *(int *)(param);
 
@@ -64,8 +64,8 @@ int tri_int(s_node * node, void * param)
 {
     int data = *(int *) node->data;
     int nb = *(int *) param;
-    if (data > nb) return -1;
-    if (data < nb) return 1;
+    if (data > nb) return 1;
+    if (data < nb) return -1;
     return 0;
 }
 
@@ -123,20 +123,23 @@ s_node * test_process(s_node * node) {
     return node;
 }
 
-s_node * test_ordered_append(s_node * node, const int tab[], const unsigned int len)
+s_node * test_ordered_append(s_node * node)
 {
+    static const int tab[2] = { -1, 2 };
+    const unsigned int new_len = calc_length(node) + 2;
 
     printf_template("ordered_append", '-');
-    printf("Avant :");
+    printf("Avant :\t");
     afficher_s_node(node);
 
-    for(unsigned int i = len / 2; i < len; i++) {
-        printf("Insertion du nombre %d\n", nb);
-        node = list_ordered_append(&node, &tri_int, &nb);
+    for (unsigned int i = 0; i < 2; i++) {
+        printf("Insertion du nombre %d\n", tab[i]);
+        node = list_ordered_append(&node, &tri_int, (void *)(tab + i));
     }
 
     printf("Après :");
     afficher_s_node(node);
+    assert(new_len == calc_length(node));
     return node;
 }
 
@@ -200,34 +203,30 @@ int main(void)
     list = test_insert(list, to_insert, len, max);
     list = test_append(list, to_append, len, max);
     list = test_process(list);
-    list = test_ordered_append(list, tab, len);
+    list = test_ordered_append(list);
     list = test_remove(list, to_append, len, random(len));
     list = test_headRemove(list, len / 2);
     test_destroy(list);
-    
-    list = list_create();
-    list = list_insert(list, -1);
-    list = test_ordered_append(list, tab, len);
 
     printf_template("liste null", '=');
 
     test_destroy(list);
     list = list_create();
     test_append(list, to_append, 2, 20);
-    list_destroy(list);
+    list = list_destroy(list);
 
     list = list_create();
     list = test_process(list);
 
     list = test_ordered_append(list);
-    list_destroy(list);
+    list = list_destroy(list);
 
     test_remove(list, to_insert, 2, random(len));
-    list_destroy(list);
+    list = list_destroy(list);
 
     list = list_create();
     test_headRemove(list_create(), 2);
-    list_destroy(list);
+    list = list_destroy(list);
 
     list = list_create();
     test_destroy(list);

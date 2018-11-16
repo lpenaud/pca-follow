@@ -62,7 +62,7 @@ s_node * list_ordered_append(s_node ** head, int (*fct)(s_node * node, void * pa
 {
     // quand elle est vide
     if (!(*head) || fct(*head, param) == 1) return list_insert(*head, param);
-    
+
     // insertion en tete
 
     // cas general
