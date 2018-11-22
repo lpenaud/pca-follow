@@ -9,11 +9,11 @@ typedef struct {
 } super_list;
 
 typedef struct {
-    super_list * tab;
+    super_list * list;
     unsigned int len; 
 } strhash_table;
 
-strhash_table * strhash_table_init(unsigned int len);
+strhash_table * strhash_table_init(const unsigned int len);
 // malloc sizeof super_list * len
 // len = len
 // list_create * len
