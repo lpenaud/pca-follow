@@ -15,25 +15,18 @@ else
 	PRE_EXEC = .out
 endif
 
-DEPS = liste test_liste test
-
-BIN = $(foreach dep, $(DEPS), bin/$(dep).o)
-SRC = $(foreach dep, $(DEPS), src/$(dep).c)
-
-test_hachage: bin/test.o bin/test_hachage.o
-	$(CC) -o $@$(PRE_EXEC) $^ $(LDFLAGS)
+all: test_hachage test_liste
 ifeq ($(ENV),DEBUG)
 	@echo "Génération du mode DEBUG"
 else
 	@echo "Génération en mode release"
 endif
 
-test_liste: bin/liste.o bin/test.o bin/test_liste.o
+test_hachage: bin/test.o bin/test_hachage.o bin/hachage.o bin/liste.o
 	$(CC) -o $@$(PRE_EXEC) $^ $(LDFLAGS)
 
-bin/liste.o: src/liste.h
-
-bin/hachage.o: src/hachage.h
+test_liste: bin/liste.o bin/test.o bin/test_liste.o
+	$(CC) -o $@$(PRE_EXEC) $^ $(LDFLAGS)
 
 bin/%.o: src/%.c
 	$(CC) -o $@ -c $< $(CFLAGS)
