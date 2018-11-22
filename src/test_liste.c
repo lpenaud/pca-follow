@@ -1,43 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
-#include <string.h>
 #include "liste.h"
-
-#define CPL 72
-
-int random(const int max)
-{
-    return rand() % (max + 1);
-}
-
-void printf_template(const char * name_test, const char ch) {
-    const char prefix[] = "Test";
-    const int len = strlen(prefix) + strlen(name_test) + 1;
-    const unsigned int nb_ch = (CPL - len) / 2;
-
-    putchar('\n');
-    for (unsigned int i = 0; i <= CPL; i++) {
-        if (i == nb_ch) {
-            printf("%s %s", prefix, name_test);
-            i += len;
-        } else {
-            putchar(ch);
-        }
-    }
-    putchar('\n');
-}
-
-void afficher_s_node(s_node * list)
-{
-    printf("\nliste = [");
-    while (list) {
-        printf("%d,", *((int *)(list->data)));
-        list = list->next;
-    }
-    printf("]\n");
-    return;
-}
+#include "test.h"
 
 unsigned int calc_length(s_node * node)
 {
@@ -76,7 +41,7 @@ s_node * test_insert(s_node * node, int tab[], const unsigned int len, const uns
 
     printf_template("insert", '-');
     for (unsigned int i = 0; i < len; i++) {
-        tab[i] = random(max);
+        tab[i] = random_with_max(max);
         printf("\t%d. Insertion du nombre %d\n", i, tab[i]);
         node = list_insert(node, (tab + i));
     }
@@ -95,7 +60,7 @@ s_node * test_append(s_node * node, int tab[], const unsigned int len, const uns
 
     printf_template("append", '-');
     for (unsigned int i = 0; i < len; i++) {
-        tab[i] = random(max);
+        tab[i] = random_with_max(max);
         printf("\t%d. Ajout du nombre %d\n", i, tab[i]);
         node = list_append(node, (tab + i));
     }
@@ -133,7 +98,7 @@ s_node * test_ordered_append(s_node * node, int *tab, unsigned int len)
 
     for (unsigned int i = 0; i < len; i++) {
         printf("Insertion du nombre %d\n", tab[i]);
-        node = list_ordered_append(&node, &tri_int, (void *)(tab + i));
+        list_ordered_append(&node, &tri_int, (void *)(tab + i));
     }
 
     printf("Après :");
@@ -149,7 +114,7 @@ s_node * test_remove(s_node * node, int data[], const unsigned int len, const un
 
     printf_template("remove", '-');
     for (unsigned int i = 0; i <= count; i++) {
-        int * ptn = (data + random(len - 1));
+        int * ptn = (data + random_with_max(len - 1));
         printf("\tSuppression du noeud ayant comme valeur %d\n", *ptn);
         node = list_remove(node, (void *)ptn);
     }
@@ -208,7 +173,7 @@ int main(void)
     tab[1] = 2;
     tab[2] = to_append[len -1];
     list = test_ordered_append(list, tab, 3);
-    list = test_remove(list, to_append, len, random(len));
+    list = test_remove(list, to_append, len, random_with_max(len));
     list = test_headRemove(list, len / 2);
     test_destroy(list);
 
@@ -225,7 +190,7 @@ int main(void)
     list = test_ordered_append(list, tab, 3);
     list = list_destroy(list);
 
-    test_remove(list, to_insert, 2, random(len));
+    test_remove(list, to_insert, 2, random_with_max(len));
     list = list_destroy(list);
 
     list = list_create();

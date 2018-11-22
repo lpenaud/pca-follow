@@ -61,20 +61,28 @@ s_node * list_ordered_append(s_node ** head, int (*fct)(s_node * node, void * pa
     void * param)
 {
     // quand elle est vide
-    if (!(*head) || fct(*head, param) == 1) return list_insert(*head, param);
+    if (!(*head)) {
+        *head = list_insert(*head, param);
+        return *head;
+    }
 
     // insertion en tete
+    s_node * node;
+    if (fct(*head, param) == 1) {
+        *head = list_insert(*head, param);
+        return (*head);
+    }
 
     // cas general
-    s_node * node;
     for(node = *head; node->next; node = node->next) {
         if (fct(node->next, param) == 1) {
             node->next = list_insert(node->next, param);
-            return *head;
+            return node->next;
         }
     }
 
-    return list_append(*head, param);
+    *head = list_append(*head, param);
+    return node->next;
 }
 
 s_node * list_remove (s_node * head, void * data)
@@ -113,4 +121,15 @@ s_node * list_destroy(s_node * head)
 
     free(node);
     return node;
+}
+
+void afficher_s_node(s_node * list)
+{
+    printf("\nliste = [");
+    while (list) {
+        printf("%d,", *((int *)(list->data)));
+        list = list->next;
+    }
+    printf("]\n");
+    return;
 }
