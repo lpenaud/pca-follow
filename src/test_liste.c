@@ -123,16 +123,15 @@ s_node * test_process(s_node * node) {
     return node;
 }
 
-s_node * test_ordered_append(s_node * node)
+s_node * test_ordered_append(s_node * node, int *tab, unsigned int len)
 {
-    static const int tab[2] = { -1, 2 };
-    const unsigned int new_len = calc_length(node) + 2;
+    const unsigned int new_len = calc_length(node) + len;
 
     printf_template("ordered_append", '-');
     printf("Avant :\t");
     afficher_s_node(node);
 
-    for (unsigned int i = 0; i < 2; i++) {
+    for (unsigned int i = 0; i < len; i++) {
         printf("Insertion du nombre %d\n", tab[i]);
         node = list_ordered_append(&node, &tri_int, (void *)(tab + i));
     }
@@ -197,13 +196,18 @@ int main(void)
     const unsigned int len = 10, max = 50;
     s_node * list = list_create();
     int to_insert[len], to_append[len];
+    int tab[3];
 
     printf_template("liste non null", '=');
 
     list = test_insert(list, to_insert, len, max);
     list = test_append(list, to_append, len, max);
+ 
     list = test_process(list);
-    list = test_ordered_append(list);
+    tab[0] = -1;
+    tab[1] = 2;
+    tab[2] = to_append[len -1];
+    list = test_ordered_append(list, tab, 3);
     list = test_remove(list, to_append, len, random(len));
     list = test_headRemove(list, len / 2);
     test_destroy(list);
@@ -218,7 +222,7 @@ int main(void)
     list = list_create();
     list = test_process(list);
 
-    list = test_ordered_append(list);
+    list = test_ordered_append(list, tab, 3);
     list = list_destroy(list);
 
     test_remove(list, to_insert, 2, random(len));
