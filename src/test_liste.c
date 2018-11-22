@@ -1,43 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
-#include <string.h>
 #include "liste.h"
-
-#define CPL 72
-
-int random(const int max)
-{
-    return rand() % (max + 1);
-}
-
-void printf_template(const char * name_test, const char ch) {
-    const char prefix[] = "Test";
-    const int len = strlen(prefix) + strlen(name_test) + 1;
-    const unsigned int nb_ch = (CPL - len) / 2;
-
-    putchar('\n');
-    for (unsigned int i = 0; i <= CPL; i++) {
-        if (i == nb_ch) {
-            printf("%s %s", prefix, name_test);
-            i += len;
-        } else {
-            putchar(ch);
-        }
-    }
-    putchar('\n');
-}
-
-void afficher_s_node(s_node * list)
-{
-    printf("\nliste = [");
-    while (list) {
-        printf("%d,", *((int *)(list->data)));
-        list = list->next;
-    }
-    printf("]\n");
-    return;
-}
+#include "test.h"
 
 unsigned int calc_length(s_node * node)
 {

@@ -43,4 +43,6 @@ s_node * list_destroy(s_node * head);
 // destruction d'une list
 // (La liberation des données n'est pas prise en charge)
 
+void afficher_s_node(s_node * list);
+
 #endif

@@ -114,3 +114,14 @@ s_node * list_destroy(s_node * head)
     free(node);
     return node;
 }
+
+void afficher_s_node(s_node * list)
+{
+    printf("\nliste = [");
+    while (list) {
+        printf("%d,", *((int *)(list->data)));
+        list = list->next;
+    }
+    printf("]\n");
+    return;
+}
