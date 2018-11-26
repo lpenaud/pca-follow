@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 
 #include "hachage.h"
 #include "liste.h"
@@ -24,14 +25,18 @@ strhash_table * strhash_table_init(const unsigned int len)
 
 strhash_table * strhash_table_destroy(strhash_table * table)
 {
-    unsigned int i;
+    unsigned int i, j;
     super_list *list;
+    s_node *node;
 
-    for(i = 0; i < table->len; i++) {
+    for (i = 0; i < table->len; i++) {
         list = table->list + i;
-        free(list->list->data);
-        list_destroy(list->list);
-        free(list);
+        for (j = 0; j < list->len; j++) {
+            node = list->node + j;
+            free(node->data);
+        }
+        list_destroy(list->node);
+        // free(list); // TODO: free(): invalid pointer
     }
 
     free(table);
