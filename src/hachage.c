@@ -7,14 +7,14 @@ strhash_table * strhash_table_init(const unsigned int len)
 {
     super_list *list;
     strhash_table *table = (strhash_table *) malloc(sizeof(strhash_table));
-    if (!table) return NULL;
-    
+    if(!table) return NULL;
+
     table->len = len;
     list = (super_list *) malloc(sizeof(super_list) * len);
     if (!list) return NULL;
 
-    for(unsigned int i = 0; i < len; i++) {
-        list[i].list = list_create();
+    for (unsigned int i = 0; i < len; i++) {
+        list[i].node = list_create();
         list[i].len = 0;
     }
     table->list = list;

@@ -4,13 +4,13 @@
 #include "liste.h"
 
 typedef struct {
-    s_node * list;
+    s_node * node;
     unsigned int len;
 } super_list;
 
 typedef struct {
     super_list * list;
-    unsigned int len; 
+    unsigned int len;
 } strhash_table;
 
 strhash_table * strhash_table_init(const unsigned int len);
@@ -40,4 +40,3 @@ void strhash_table_stat(strhash_table * table);
 void strhash_print(strhash_table * table);
 
 #endif
-
