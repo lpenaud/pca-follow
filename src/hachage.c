@@ -43,7 +43,21 @@ strhash_table * strhash_table_destroy(strhash_table * table)
     return table;
 }
 
-strhash_table * strhash_table_free(strhash_table * table);
+strhash_table * strhash_table_free(strhash_table * table)
+{
+    unsigned int i;
+    super_list *list;
+    for (i = 0; i < table->len; i++) {
+        list = table->list + i;
+        if (list->len > 0) {
+            free(list->node->data);
+            list->node = list_destroy(list->node);
+            list->len = 0;
+            return table;
+        }
+    }
+    return table;
+}
 // remove list->data
 
 strhash_table * strhash_table_add(strhash_table * table, char * str);
@@ -65,4 +79,3 @@ void strhash_table_stat(strhash_table * table);
 */
 
 void strhash_print(strhash_table * table);
-
