@@ -56,3 +56,4 @@ int main(void)
     table = test_destroy(table);
     return 0;
 }
+
