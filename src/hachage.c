@@ -90,7 +90,10 @@ char * strhash_table_add(strhash_table * table, char * str)
     return inserted_or_exist_node->data;
 }
 
-strhash_table * strhash_table_remove(strhash_table * table, char * str);
+strhash_table * strhash_table_remove(strhash_table * table, char * str)
+{
+    int index = calc_cle_hash(str, table->len);
+}
 // list_process strcomp
 // last -> élément à supprimer
 
