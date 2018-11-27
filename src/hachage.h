@@ -23,7 +23,7 @@ strhash_table * strhash_table_destroy(strhash_table * table);
 strhash_table * strhash_table_free(strhash_table * table);
 // remove list->data
 
-strhash_table * strhash_table_add(strhash_table * table, char * str);
+char * strhash_table_add(strhash_table * table, char * str);
 // str_dump(
 // ordered_append(
 

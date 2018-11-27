@@ -1,8 +1,19 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "hachage.h"
 #include "liste.h"
+
+int calc_cle_hash(char * str, const int size_hash_table)
+{
+     int i, cle = 0;
+     for (i = 0; str[i] != '\0'; i++) {
+        cle *= 2;
+        cle += (int) str[i];
+    }
+     return cle % size_hash_table;
+}
 
 strhash_table * strhash_table_init(const unsigned int len)
 {
@@ -60,11 +71,24 @@ strhash_table * strhash_table_free(strhash_table * table)
 }
 // remove list->data
 
-strhash_table * strhash_table_add(strhash_table * table, char * str);
-// strdup(
-// ordered_append(
-// incrementer
-// check return ordered_append pour éviter doublons
+int compare_str(s_node *node, void *param){
+    int res = strcmp((char *) node->data, (char *) param);
+    if (res < 0) return -1;
+    if (res > 0) return 1;
+    return 0;
+}
+
+char * strhash_table_add(strhash_table * table, char * str)
+{
+    char * to_insert = strdup(str);
+    int index = calc_cle_hash(str, table->len);
+
+    s_node *inserted_or_exist_node = list_ordered_append(&(table->list[index].node), compare_str, to_insert); 
+    if(inserted_or_exist_node->data != to_insert) {
+        free(to_insert);
+    }
+    return inserted_or_exist_node->data;
+}
 
 strhash_table * strhash_table_remove(strhash_table * table, char * str);
 // list_process strcomp
