@@ -21,7 +21,7 @@ void printf_template(const char * name_test, const char ch)
     putchar('\n');
 }
 
-int random(const int max)
+int random_with_max(const int max)
 {
     return rand() % (max + 1);
 }

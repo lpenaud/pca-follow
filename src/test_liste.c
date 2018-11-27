@@ -41,7 +41,7 @@ s_node * test_insert(s_node * node, int tab[], const unsigned int len, const uns
 
     printf_template("insert", '-');
     for (unsigned int i = 0; i < len; i++) {
-        tab[i] = random(max);
+        tab[i] = random_with_max(max);
         printf("\t%d. Insertion du nombre %d\n", i, tab[i]);
         node = list_insert(node, (tab + i));
     }
@@ -60,7 +60,7 @@ s_node * test_append(s_node * node, int tab[], const unsigned int len, const uns
 
     printf_template("append", '-');
     for (unsigned int i = 0; i < len; i++) {
-        tab[i] = random(max);
+        tab[i] = random_with_max(max);
         printf("\t%d. Ajout du nombre %d\n", i, tab[i]);
         node = list_append(node, (tab + i));
     }
@@ -114,7 +114,7 @@ s_node * test_remove(s_node * node, int data[], const unsigned int len, const un
 
     printf_template("remove", '-');
     for (unsigned int i = 0; i <= count; i++) {
-        int * ptn = (data + random(len - 1));
+        int * ptn = (data + random_with_max(len - 1));
         printf("\tSuppression du noeud ayant comme valeur %d\n", *ptn);
         node = list_remove(node, (void *)ptn);
     }
@@ -173,7 +173,7 @@ int main(void)
     tab[1] = 2;
     tab[2] = to_append[len -1];
     list = test_ordered_append(list, tab, 3);
-    list = test_remove(list, to_append, len, random(len));
+    list = test_remove(list, to_append, len, random_with_max(len));
     list = test_headRemove(list, len / 2);
     test_destroy(list);
 
@@ -190,7 +190,7 @@ int main(void)
     list = test_ordered_append(list, tab, 3);
     list = list_destroy(list);
 
-    test_remove(list, to_insert, 2, random(len));
+    test_remove(list, to_insert, 2, random_with_max(len));
     list = list_destroy(list);
 
     list = list_create();

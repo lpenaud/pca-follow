@@ -2,10 +2,10 @@ ENV = ${C_ENV}
 CC = gcc
 
 ifeq ($(ENV),DEBUG)
-	CFLAGS = -W -Wall -ansi -std=c99 -Og
+	CFLAGS = -W -Wall -ansi -std=gnu99 -Og
 	LDFLAGS =
 else
-	CFLAGS = -W -Wall -ansi -std=c99
+	CFLAGS = -W -Wall -ansi -std=gnu99
 	LDFLAGS =
 endif
 

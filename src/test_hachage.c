@@ -34,7 +34,7 @@ void test_add(strhash_table *table)
     for (i = 0; i < 3; i++) {
         strcpy(str, "");
         for (j = 0; j < STR_LEN_MAX; j++) {
-            str[j] = (char) ('a' + random(26));
+            str[j] = (char) ('a' + random_with_max(26));
         }
         str[j] = '\0';
         inserted = strhash_table_add(table, str);
