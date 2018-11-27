@@ -36,9 +36,9 @@ strhash_table * strhash_table_destroy(strhash_table * table)
             free(node->data);
         }
         list_destroy(list->node);
-        // free(list); // TODO: free(): invalid pointer
     }
-
+    free(table->list);
+ 
     free(table);
     return table;
 }
