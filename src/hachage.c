@@ -15,6 +15,19 @@ int calc_cle_hash(char * str, const int size_hash_table)
      return cle % size_hash_table;
 }
 
+int compare_str_add(s_node *node, void *param)
+{
+    int res = strcmp((char *) node->data, (char *) param);
+    if (res < 0) return -1;
+    if (res > 0) return 1;
+    return 0;
+}
+
+int find_str_node(s_node *node, void *param)
+{
+    return strcmp((char *) node->data, (char *) param) == 0 ? 1 : 0;
+}
+
 void strhash_print(strhash_table * table)
 {
     unsigned int i, j;
@@ -89,23 +102,16 @@ strhash_table * strhash_table_free(strhash_table * table)
 }
 // remove list->data
 
-int compare_str(s_node *node, void *param){
-    int res = strcmp((char *) node->data, (char *) param);
-    if (res < 0) return -1;
-    if (res > 0) return 1;
-    return 0;
-}
-
 char * strhash_table_add(strhash_table * table, char * str)
 {
     char * to_insert = strdup(str);
     int index = calc_cle_hash(str, table->len);
 
-    s_node *inserted_or_exist_node = list_ordered_append(&(table->list[index].node), compare_str, to_insert); 
-    if(inserted_or_exist_node->data != to_insert) {
-        free(to_insert);
-    }
-    return inserted_or_exist_node->data;
+    s_node *inserted_or_exist_node = list_ordered_append(&(table->list[index].node), &compare_str_add, to_insert);
+    table->list[index].node = inserted_or_exist_node;
+    table->list[index].len++;
+    list_process(table->list[index].node, &find_str_node, str, &inserted_or_exist_node);
+    return (char *) inserted_or_exist_node->data;
 }
 
 strhash_table * strhash_table_remove(strhash_table * table, char * str)

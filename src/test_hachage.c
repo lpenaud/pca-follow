@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <assert.h>
 #include <string.h>
+#include <string.h>
 
 #include "test.h"
 #include "hachage.h"
@@ -20,26 +21,25 @@ strhash_table * test_init(const unsigned int len)
 strhash_table * test_destroy(strhash_table * table)
 {
     table = strhash_table_destroy(table);
-    if (table->list) { 
-        printf("La table n'a pas été détruite (%p)\n", table);
+    if (table->list->node) {
+        printf("La table n'a pas été détruite (%p)\n", table->list->node);
         assert(0);
     }
     return NULL;
 }
 
-void test_add(strhash_table *table)
+void test_add(strhash_table *table, char strings[][STR_LEN_MAX+1], const unsigned int len)
 {
-    char str[STR_LEN_MAX+1], *inserted;
+    char *inserted;
     unsigned int i, j;
-    for (i = 0; i < 3; i++) {
-        strcpy(str, "");
+    for (i = 0; i < len; i++) {
         for (j = 0; j < STR_LEN_MAX; j++) {
-            str[j] = (char) ('a' + random_with_max(26));
+            strings[i][j] = (char) ('a' + random_with_max(25));
         }
-        str[j] = '\0';
-        inserted = strhash_table_add(table, str);
-        if (strcmp(inserted, str) != 0) {
-            printf("Chaines non égale : \n\tstr = %s\n\tinserted = %s\n", str, inserted);
+        strings[i][j] = '\0';
+        inserted = strhash_table_add(table, strings[i]);
+        if (strcmp(inserted, strings[i]) != 0) {
+            printf("Chaines non égale : \n\tstr = %s\n\tinserted = %s\n", strings[i], inserted);
             assert(0);
         }
     }
@@ -50,8 +50,9 @@ int main(void)
 {
     const unsigned int len = 5;
     strhash_table * table = test_init(len);
+    char strings[len][STR_LEN_MAX+1];
 
-    test_add(table);
+    test_add(table, strings, len);
     strhash_print(table);
 
     table = test_destroy(table);
