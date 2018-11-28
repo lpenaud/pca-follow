@@ -52,6 +52,7 @@ int main(void)
     strhash_table * table = test_init(len);
 
     test_add(table);
+    strhash_print(table);
 
     table = test_destroy(table);
     return 0;

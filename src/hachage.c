@@ -15,6 +15,24 @@ int calc_cle_hash(char * str, const int size_hash_table)
      return cle % size_hash_table;
 }
 
+void strhash_print(strhash_table * table)
+{
+    unsigned int i, j;
+    super_list *list;
+    s_node *node;
+
+    printf("Hash table %p\n", table);
+    for (i = 0; i < table->len; i++) {
+        list = table->list + i;
+        printf("\tList %p\n", list);
+        for (j = 0, node = list->node; j < list->len; j++, node = node->next) {
+            printf("\t\t%d. %s\n", j, (char *) node->data);
+        }
+    }
+
+    return;
+}
+
 strhash_table * strhash_table_init(const unsigned int len)
 {
     super_list *list;
@@ -104,5 +122,3 @@ void strhash_table_stat(strhash_table * table);
     Nombre maximum
     Écart type du nombre d'éléments par entrée
 */
-
-void strhash_print(strhash_table * table);
