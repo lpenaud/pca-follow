@@ -73,14 +73,13 @@ strhash_table * strhash_table_destroy(strhash_table * table)
 
     for (i = 0; i < table->len; i++) {
         list = table->list + i;
-        for (j = 0; j < list->len; j++) {
-            node = list->node + j;
-            free(node->data);
+        for (j = 0, node = list->node; j < list->len; j++, node = node->next) {
+            free(list->node->data);
         }
         list_destroy(list->node);
     }
     free(table->list);
- 
+
     free(table);
     return table;
 }
@@ -116,7 +115,16 @@ char * strhash_table_add(strhash_table * table, char * str)
 
 strhash_table * strhash_table_remove(strhash_table * table, char * str)
 {
-    int index = calc_cle_hash(str, table->len);
+    const int index = calc_cle_hash(str, table->len);
+    if (table->list[index].len == 0) return table;
+
+    s_node *find_node;
+    const int result = list_process(table->list[index].node, &find_str_node, str, &find_node);
+    if (result == 1) {
+        free(find_node->data);
+        list_headRemove(find_node);
+    }
+    return table;
 }
 // list_process strcomp
 // last -> élément à supprimer

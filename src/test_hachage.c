@@ -46,6 +46,21 @@ void test_add(strhash_table *table, char strings[][STR_LEN_MAX+1], const unsigne
     return;
 }
 
+void test_remove(strhash_table *table, char strings[][STR_LEN_MAX+1], const unsigned int len) {
+    unsigned int lens[len], i, j;
+    for (i = 0; i < len; i++) {
+        lens[i] = table->list[i].len;
+    }
+    strhash_table_remove(table, strings[random_with_max(len)]);
+    for (i = 0; i < len; i++) {
+        if (lens[i] == table->list[i].len) j++;
+    }
+    if (j == len - 1) {
+        printf("Aucun changement au niveau des tailles des listes\n");
+        assert(0);
+    }
+}
+
 int main(void)
 {
     const unsigned int len = 5;
@@ -54,8 +69,8 @@ int main(void)
 
     test_add(table, strings, len);
     strhash_print(table);
+    test_remove(table, strings, len);
 
     table = test_destroy(table);
     return 0;
 }
-
