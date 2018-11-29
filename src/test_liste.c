@@ -98,7 +98,7 @@ s_node * test_ordered_append(s_node * node, int *tab, unsigned int len)
 
     for (unsigned int i = 0; i < len; i++) {
         printf("Insertion du nombre %d\n", tab[i]);
-        node = list_ordered_append(&node, &tri_int, (void *)(tab + i));
+        list_ordered_append(&node, &tri_int, (void *)(tab + i));
     }
 
     printf("Après :");

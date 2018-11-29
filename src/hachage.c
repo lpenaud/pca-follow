@@ -107,9 +107,7 @@ char * strhash_table_add(strhash_table * table, char * str)
     int index = calc_cle_hash(str, table->len);
 
     s_node *inserted_or_exist_node = list_ordered_append(&(table->list[index].node), &compare_str_add, to_insert);
-    table->list[index].node = inserted_or_exist_node;
     table->list[index].len++;
-    list_process(table->list[index].node, &find_str_node, str, &inserted_or_exist_node);
     return (char *) inserted_or_exist_node->data;
 }
 
