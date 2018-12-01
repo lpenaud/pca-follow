@@ -1,12 +1,11 @@
 ENV = ${C_ENV}
 CC = gcc
 
+CFLAGS = -W -Wall -ansi -std=gnu99
+LDFLAGS = -lm
+
 ifeq ($(ENV),DEBUG)
 	CFLAGS = -W -Wall -ansi -std=gnu99 -Og
-	LDFLAGS = -lm
-else
-	CFLAGS = -W -Wall -ansi -std=gnu99
-	LDFLAGS = -lm
 endif
 
 ifeq ($(OS),Windows_NT)

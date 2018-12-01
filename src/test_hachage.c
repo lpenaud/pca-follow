@@ -47,7 +47,7 @@ void test_add(strhash_table *table, char strings[][STR_LEN_MAX+1], const unsigne
 }
 
 void test_remove(strhash_table *table, char strings[][STR_LEN_MAX+1], const unsigned int len) {
-    unsigned int lens[len], i, j;
+    unsigned int lens[len], i, j = 0;
     for (i = 0; i < len; i++) {
         lens[i] = table->list[i].len;
     }
