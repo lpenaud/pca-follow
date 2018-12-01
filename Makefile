@@ -3,10 +3,10 @@ CC = gcc
 
 ifeq ($(ENV),DEBUG)
 	CFLAGS = -W -Wall -ansi -std=gnu99 -Og
-	LDFLAGS =
+	LDFLAGS = -lm
 else
 	CFLAGS = -W -Wall -ansi -std=gnu99
-	LDFLAGS =
+	LDFLAGS = -lm
 endif
 
 ifeq ($(OS),Windows_NT)
