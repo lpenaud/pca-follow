@@ -63,12 +63,13 @@ void test_remove(strhash_table *table, char strings[][STR_LEN_MAX+1], const unsi
 
 int main(void)
 {
-    const unsigned int len = 5;
+    const unsigned int len = 3;
     strhash_table * table = test_init(len);
-    char strings[len][STR_LEN_MAX+1];
+    char strings[5][STR_LEN_MAX+1];
 
-    test_add(table, strings, len);
+    test_add(table, strings, 5);
     strhash_print(table);
+    strhash_table_stat(table);
     test_remove(table, strings, len);
 
     table = test_destroy(table);

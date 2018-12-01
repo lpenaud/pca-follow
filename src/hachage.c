@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <math.h>
 
 #include "hachage.h"
 #include "liste.h"
@@ -99,7 +100,6 @@ strhash_table * strhash_table_free(strhash_table * table)
     }
     return table;
 }
-// remove list->data
 
 char * strhash_table_add(strhash_table * table, char * str)
 {
@@ -124,13 +124,32 @@ strhash_table * strhash_table_remove(strhash_table * table, char * str)
     }
     return table;
 }
-// list_process strcomp
-// last -> élément à supprimer
 
-void strhash_table_stat(strhash_table * table);
-/*
-    Nombre total élément
-    Nombre minimum
-    Nombre maximum
-    Écart type du nombre d'éléments par entrée
-*/
+void strhash_table_stat(strhash_table * table)
+{
+    unsigned int i;
+    unsigned int len, min, max;
+    float deviation, moy;
+
+    len = max = min = table->list[0].len;
+    for (i = 1; i < table->len; i++) {
+        if (table->list[i].len > max) max = table->list[i].len;
+        else if (table->list[i].len < min) min = table->list[i].len;
+        len += table->list[i].len;
+    }
+
+    moy = (float)len / table->len;
+    deviation = 0;
+    for (i = 0; i < table->len; i++) {
+        deviation += (table->list[i].len - moy) * (table->list[i].len - moy);
+    }
+    deviation = (float) sqrt(deviation / table->len);
+
+    printf("Table hachage : %p\n", table);
+    printf("\tNombre total d'élément : %u\n", len);
+    printf("\tNombre minimum : %u\n", min);
+    printf("\tNombre maximum : %u\n", max);
+    printf("\tÉcart type du nombre d'éléments par entrée : %.2f\n", deviation);
+
+    return;
+}
