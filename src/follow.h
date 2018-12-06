@@ -1,33 +1,44 @@
 #ifndef FOLLOW_H
-#define FOLLoW_H
+#define FOLLOW_H
 
 #include "hachage.h"
 
-//  structure décrivant une instance de follow
-typedef struct {
-    strhash_table table;
-    text * pTextRef;
-} follow;
+#define BUFFER_MAX 255
 
-// strucutre décrivant un document
-typedef struct {
-    char *text; // texte brut
-    // text & token représente la même données
-    token **tokenize_text; // le text découpé
-
-    // longeur du text brut, nb jetons total, nb jetons WORD, ...
-} text;
+enum token_type {
+    WORD,
+    SHORT_SPACE,
+    SPACE,
+    ERASE,
+    INSERT,
+    REPLACE,
+    EMPTY
+};
 
 // unité lexicale du texte
 typedef struct {
     // espace  ' ', '\n', ou '\t'
-    enum { WORD, SHORT_SPACE, SPACE, ERASE, INSERT, REPLACE, EMPTY } type;
+    enum token_type type;
     int textOffset; // position dans le texte (char *) d'origines
     union {
         char *word; // pointeur sur un mot de la table de hachage
         char space[4]; // 4 délimiteurs max
     } data;
 } token;
+
+// strucutre décrivant un document
+typedef struct {
+    char *txt; // texte brut
+    // text & token représente la même données
+    token **tokenize_text; // le text découpé
+    unsigned int txt_len, nb_token, nb_word, nb_short_space, nb_space, nb_erase, nb_insert, nb_replace, nb_empty;
+} text;
+
+//  structure décrivant une instance de follow
+typedef struct {
+    strhash_table table;
+    text * pTextRef;
+} follow;
 
 text * text_load(const char *filename);
 
