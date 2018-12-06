@@ -68,14 +68,15 @@ strhash_table * strhash_table_init(const unsigned int len)
 
 strhash_table * strhash_table_destroy(strhash_table * table)
 {
-    unsigned int i, j;
+    unsigned int i;
     super_list *list;
     s_node *node;
 
     for (i = 0; i < table->len; i++) {
         list = table->list + i;
-        for (j = 0, node = list->node; j < list->len; j++, node = node->next) {
-            free(list->node->data);
+        for (node = list->node; node != NULL; node = node->next) {
+//            printf("%s\n", node->data);
+            free(node->data);
         }
         list_destroy(list->node);
     }
@@ -107,7 +108,8 @@ char * strhash_table_add(strhash_table * table, char * str)
     int index = calc_cle_hash(str, table->len);
 
     s_node *inserted_or_exist_node = list_ordered_append(&(table->list[index].node), &compare_str_add, to_insert);
-    table->list[index].len++;
+    if (inserted_or_exist_node->data == to_insert)
+        table->list[index].len++;
     return (char *) inserted_or_exist_node->data;
 }
 
@@ -120,7 +122,8 @@ strhash_table * strhash_table_remove(strhash_table * table, char * str)
     const int result = list_process(table->list[index].node, &find_str_node, str, &find_node);
     if (result == 1) {
         free(find_node->data);
-        list_headRemove(find_node);
+        table->list[index].node = list_remove(table->list[index].node, find_node->data);
+        table->list[index].len--;
     }
     return table;
 }
