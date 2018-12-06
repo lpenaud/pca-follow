@@ -74,12 +74,17 @@ s_node * list_ordered_append(s_node ** head, int (*fct)(s_node * node, void * pa
     }
 
     // cas general
+    int res;
     for(node = *head; node->next; node = node->next) {
-        if (fct(node->next, param) == 1) {
+        printf("%s\n", (char *) node->next->data);
+        if ((res = fct(node->next, param)) == 1) {
             node->next = list_insert(node->next, param);
+            return node->next;
+        } else if (res == 0) {
             return node->next;
         }
     }
+    if (fct(node, param) == 0) return node;
 
     *head = list_append(*head, param);
     return node->next;

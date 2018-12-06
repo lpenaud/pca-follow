@@ -26,3 +26,7 @@ int random_with_max(const int max)
     return rand() % (max + 1);
 }
 
+void init_tab(unsigned int tab[], const unsigned int len, const unsigned int value)
+{
+    for (unsigned int i = 0; i < len; i++) tab[i] = value;
+}
