@@ -47,4 +47,6 @@ token * next_token_get(char *text, strhash_table *ht, int *offset);
 // PLSC -> Plus Longue sous Séquence Commune
 int ** plsc(text *ref, text *cur);
 
+void display_text(text *content);
+
 #endif

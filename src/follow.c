@@ -122,3 +122,18 @@ text * text_load(const char *filename)
 
     return content;
 }
+
+void display_text(text *content)
+{
+    printf("# Pointer\n%p\n", content);
+    printf("\n# Text (%u)\n%s\n", content->nb_token, content->txt);
+    printf("# Tokens (%u)\n", content->txt_len);
+    printf("\tNombre token WORD : %u\n", content->nb_word);
+    printf("\tNombre token SHORT_SPACE : %u\n", content->nb_short_space);
+    printf("\tNombre token SPACE : %u\n", content->nb_space);
+    printf("\tNombre token ERASE : %u\n", content->nb_erase);
+    printf("\tNombre token INSERT : %u\n", content->nb_insert);
+    printf("\tNombre token REPLACE : %u\n", content->nb_replace);
+    printf("\tNombre token EMPTY : %u\n", content->nb_empty);
+    return;
+}
