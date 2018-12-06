@@ -46,3 +46,28 @@ struct token {
 // Éléments communs doivent être dansle même ordre, mais pas nécessairement consécutifs
 ```
 
+```
+
+// stackoverflow "file to char"
+struct text * textLoad(const char * filename);
+
+parser ne token à partir d'un offset dans le text burt. Une token peut être soit un espace court (ou long soit un mot)
+Remarque : utiliser strhash_wordAdd
+
+struct token * nextTokenGet(char * text, struct strhash_table * ht, int *offset);
+text += offset
+if (text == '\0') return NULL;
+if (text == ' ' || text = '\n' || text == '\r')
+// boucle tant qu'on a des epsace puis on crée et templi la struct token associée
+else
+    boucle tant qu'on a pas d'espace puis on crée et rempli la struct token associée
+offset = newOffeset;
+
+utiliser la fonction précédente dans une boucle pour lire et stocker toutes les tokens associées au texte brut
+int textParse(struct text *ptext, stuct strhash_table *ht);
+while (t = nextTokenGet(ptext->text, ht, &offset))
+    ajout de la token dans le tableau de pointeurs 
+    utilisation de realloc pour réallouer le tableau si nécessaire
+
+
+```
