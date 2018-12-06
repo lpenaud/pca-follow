@@ -14,12 +14,15 @@ else
 	PRE_EXEC = .out
 endif
 
-all: test_hachage test_liste
+all: test_hachage test_liste test_follow
 ifeq ($(ENV),DEBUG)
 	@echo "Génération du mode DEBUG"
 else
 	@echo "Génération en mode release"
 endif
+
+test_follow: bin/test.o bin/follow.o bin/text_follow.o
+	$(CC) -o $@$(PRE_EXEC) $^ $(LDFLAGS)
 
 test_hachage: bin/test.o bin/test_hachage.o bin/hachage.o bin/liste.o
 	$(CC) -o $@$(PRE_EXEC) $^ $(LDFLAGS)
