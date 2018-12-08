@@ -70,6 +70,7 @@ text * text_load(const char *filename)
                     }
                     tok->textOffset = i - nb_car;
                     tok->type = WORD;
+                    tok->data.word = NULL;
                     content->nb_token++;
                     content->nb_word++;
                     tik = (token **) realloc(content->tokenize_text, sizeof(token **) * content->nb_token);
@@ -95,6 +96,7 @@ text * text_load(const char *filename)
                         free(content);
                         return NULL;
                     }
+                    tok->data.word = NULL;
                     tok->textOffset = i - nb_space;
                     if (nb_space > 4) {
                         tok->type = SPACE;
@@ -123,11 +125,28 @@ text * text_load(const char *filename)
     return content;
 }
 
+void text_destroy(text *content)
+{
+    if (content == NULL) return;
+    size_t i;
+    token *tok;
+    for ( i = 0; i < content->nb_token; i++) {
+        tok = content->tokenize_text[i];
+        if (tok != NULL) {
+            if (tok->data.word != NULL) free(tok->data.word);
+            free(tok);
+        }
+    }
+    free(content->tokenize_text);
+    free(content->txt);
+    free(content);
+    return;
+}
 void display_text(text *content)
 {
     printf("# Pointer\n%p\n", content);
-    printf("\n# Text (%u)\n%s\n", content->nb_token, content->txt);
-    printf("# Tokens (%u)\n", content->txt_len);
+    printf("\n# Text (%u)\n%s\n", content->txt_len, content->txt);
+    printf("# Tokens (%u)\n", content->nb_token);
     printf("\tNombre token WORD : %u\n", content->nb_word);
     printf("\tNombre token SHORT_SPACE : %u\n", content->nb_short_space);
     printf("\tNombre token SPACE : %u\n", content->nb_space);

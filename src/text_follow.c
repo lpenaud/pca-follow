@@ -16,5 +16,12 @@ int main(void)
     text *text;
     text = test_load();
     display_text(text);
+    text *ref, *cur;
+    ref = test_load();
+    cur = text_load("example-v2.txt");
+    display_text(ref);
+    display_text(cur);
+    text_destroy(ref);
+    text_destroy(cur);
     return 0;
 }
