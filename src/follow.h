@@ -4,6 +4,7 @@
 #include "hachage.h"
 
 #define BUFFER_MAX 255
+#define MAX(x, y) ((x) > (y) ? (x) : (y))
 
 enum token_type {
     WORD,

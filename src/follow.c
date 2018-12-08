@@ -186,6 +186,24 @@ void display_matrix(int **matrix, const unsigned int nl, const unsigned int nc)
     }
 }
 
+int ** plsc(text *ref, text *cur)
+{
+    if (ref == NULL || cur == NULL) return NULL;
+    int **lg;
+    unsigned int i, j;
+    if ((lg = malloc_matrix(ref->txt_len, cur->txt_len, 0)) == NULL) return NULL;
+    for (i = 1; i < ref->txt_len; i++) {
+        for (j = 1; j < cur->txt_len; j++) {
+            if (ref->txt[i-1] == cur->txt[j-1]) {
+                lg[i][j] = lg[i-1][j-1] + 1;
+            } else {
+                lg[i][j] = MAX(lg[i-1][j], lg[i][j-1]);
+            }
+        }
+    }
+    return lg;
+}
+
 void display_text(text *content)
 {
     printf("# Text (%p)\n", content);
