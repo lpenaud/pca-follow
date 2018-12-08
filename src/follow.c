@@ -142,11 +142,55 @@ void text_destroy(text *content)
     free(content);
     return;
 }
+
+int ** malloc_matrix(const unsigned int nl, const unsigned int nc, const int dval)
+{
+    int **matrix;
+    unsigned int i, j;
+    if ((matrix = (int **) malloc(sizeof(int *) * nl)) == NULL) return NULL;
+    for (i = 0; i < nl; i++) {
+        if ((matrix[i] = (int *) malloc(sizeof(int) * nc)) == NULL) {
+            for (j = 0; j < i; j++) free(matrix[i]);
+            free(matrix);
+            return NULL;
+        }
+        for (j = 0; j < nc; j++) {
+            matrix[i][j] = dval;
+        }
+    }
+    return matrix;
+}
+
+void free_matrix(int **matrix, const unsigned int nl)
+{
+    unsigned int i;
+    for (i = 0; i < nl; i++) free(matrix[i]);
+    free(matrix);
+    return;
+}
+
+void display_matrix(int **matrix, const unsigned int nl, const unsigned int nc)
+{
+    unsigned int i, j;
+    printf("# Matrice (%p) %ux%u\nL ", matrix, nl, nc);
+    for (i = 0; i < nc; i++) {
+        printf("%d ", i);
+    }
+    putchar('\n');
+    for (i = 0; i < nl; i++) {
+        printf("%d ", i);
+        for (j = 0; j < nc; j++) {
+            printf("%d ", matrix[i][j]);
+        }
+        putchar('\n');
+    }
+}
+
 void display_text(text *content)
 {
-    printf("# Pointer\n%p\n", content);
-    printf("\n# Text (%u)\n%s\n", content->txt_len, content->txt);
-    printf("# Tokens (%u)\n", content->nb_token);
+    printf("# Text (%p)\n", content);
+    printf("\n## Content (%u)\n%s\n", content->txt_len, content->txt);
+    printf("## Tokens (%u)\n", content->nb_token);
     printf("\tNombre token WORD : %u\n", content->nb_word);
     printf("\tNombre token SHORT_SPACE : %u\n", content->nb_short_space);
     printf("\tNombre token SPACE : %u\n", content->nb_space);

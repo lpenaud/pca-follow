@@ -42,10 +42,18 @@ typedef struct {
 
 text * text_load(const char *filename);
 
-token * next_token_get(char *text, strhash_table *ht, int *offset);
+void text_destroy(text *content);
+
+int ** malloc_matrix(const unsigned int nl, const unsigned int nc, const int dval);
+
+void free_matrix(int **matrix, const unsigned int nl);
+
+void display_matrix(int **matrix, const unsigned int nl, const unsigned int nc);
 
 // PLSC -> Plus Longue sous Séquence Commune
 int ** plsc(text *ref, text *cur);
+
+token * next_token_get(char *text, strhash_table *ht, int *offset);
 
 void display_text(text *content);
 
