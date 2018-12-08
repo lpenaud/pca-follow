@@ -6,19 +6,16 @@
 
 text * test_load()
 {
-    text *text = text_load("example.txt");
+    text *text = text_load("ref.txt");
     assert(text != NULL);
     return text;
 }
 
 int main(void)
 {
-    text *text;
-    text = test_load();
-    display_text(text);
     text *ref, *cur;
     ref = test_load();
-    cur = text_load("example-v2.txt");
+    cur = text_load("cur.txt");
     display_text(ref);
     display_text(cur);
     text_destroy(ref);

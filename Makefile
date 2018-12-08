@@ -21,7 +21,7 @@ else
 	@echo "Génération en mode release"
 endif
 
-test_follow: bin/test.o bin/follow.o bin/text_follow.o
+test_follow: bin/test.o bin/follow.o bin/test_follow.o
 	$(CC) -o $@$(PRE_EXEC) $^ $(LDFLAGS)
 
 test_hachage: bin/test.o bin/test_hachage.o bin/hachage.o bin/liste.o
