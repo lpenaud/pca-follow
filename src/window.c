@@ -1,9 +1,40 @@
 #include <gtk/gtk.h>
 
+GtkBuilder *builder = NULL;
+GtkWidget *main_window = NULL;
+
+char * show_dialog_file(void)
+{
+    GtkWidget *dialog;
+    gint res;
+    GtkFileFilter *filter = gtk_file_filter_new();
+
+    dialog = gtk_file_chooser_dialog_new(
+        "Ouvrir...",
+        GTK_WINDOW(main_window),
+        GTK_FILE_CHOOSER_ACTION_OPEN,
+        "_Cancel",
+        GTK_RESPONSE_CANCEL,
+        "_Ok",
+        GTK_RESPONSE_ACCEPT,
+        NULL);
+    gtk_file_filter_set_name(filter, "Document Text");
+    gtk_file_filter_add_mime_type(filter, "text/*");
+    gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dialog), filter);
+
+    res = gtk_dialog_run(GTK_DIALOG (dialog));
+    if (res == GTK_RESPONSE_ACCEPT) {
+        char *filename;
+        GtkFileChooser *chooser = GTK_FILE_CHOOSER(dialog);
+        filename = gtk_file_chooser_get_filename(chooser);
+        gtk_widget_destroy(dialog);
+        return filename;
+    }
+    return NULL;
+}
+
 int main (int argc, char *argv[])
 {
-    GtkWidget *main_window = NULL;
-    GtkBuilder *builder = NULL;
     GError *error = NULL;
     gchar *filename = NULL;
 
@@ -27,8 +58,8 @@ int main (int argc, char *argv[])
     // Récupération du pointeur de la fenêtre principale
     main_window = GTK_WIDGET(gtk_builder_get_object(builder, "MainWindow"));
 
-    // Affectation du signal "destroy"
-    g_signal_connect(G_OBJECT(main_window), "destroy", (GCallback)gtk_main_quit, NULL);
+    // Affectation des signals
+    gtk_builder_connect_signals(builder, NULL);
 
     // Affichage de la fenêtre principale
     gtk_widget_show_all(main_window);
@@ -37,4 +68,3 @@ int main (int argc, char *argv[])
 
     return 0;
 }
-
