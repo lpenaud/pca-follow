@@ -33,6 +33,31 @@ char * show_dialog_file(void)
     return NULL;
 }
 
+void open_ref(void)
+{
+    char *filename = show_dialog_file();
+    if (filename == NULL) return;
+    printf("Filename : %s\n", filename);
+    g_free(filename);
+    return;
+}
+
+void open_cur(void)
+{
+    char *filename = show_dialog_file();
+    if (filename == NULL) return;
+    printf("Filename : %s\n", filename);
+    g_free(filename);
+    return;
+}
+
+void show_about(void)
+{
+    GtkWidget *about = GTK_WIDGET(gtk_builder_get_object(builder, "AboutDialog"));
+    gtk_dialog_run(GTK_DIALOG(about));
+    return;
+}
+
 int main (int argc, char *argv[])
 {
     GError *error = NULL;
