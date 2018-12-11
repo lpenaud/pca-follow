@@ -50,3 +50,7 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+# Gtk
+glade/*.glade~
+.fuse_hidden*
