@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <errno.h>
 
 #include "follow.h"
 
@@ -16,8 +17,11 @@ s_node * tokens_append(s_node *n, token *t, strhash_table *ht, enum token_type t
 {
     token *data = (token *) malloc(sizeof(token));
     if (data == NULL) goto err;
-    char *word = strhash_table_add(ht, t->data.word);
-    data->data.word = word;
+    if (type == SPACE || type == SHORT_SPACE) {
+        strcpy(data->data.space, t->data.space);
+    } else {
+        data->data.word = strhash_table_add(ht, t->data.word);
+    }
     data->type = type;
     if ((n = list_append(n, data)) == NULL) goto err;
     return n;
@@ -26,10 +30,10 @@ err:
     return NULL;
 }
 
-s_node * plsc(follow *f, const char *filename)
+s_node * plsc(follow *f, text *cur)
 {
     if (f == NULL) return NULL;
-    text *ref = f->pTextRef, *cur = text_load(filename);
+    text *ref = f->pTextRef;
     if (ref == NULL || cur == NULL) return NULL;
     unsigned int i, j, ref_word, cur_word;
     token *tik, *tok;
@@ -41,7 +45,11 @@ s_node * plsc(follow *f, const char *filename)
         cur_word = ref_word++;
         while (j < cur->nb_token && cur_word < ref_word) {
             tok = cur->tokenize_text[j++];
-            if (tok->type != WORD) continue;
+            if (tok->type != WORD) {
+                if ((res = tokens_append(res, tok, f->table, tok->type)) == NULL)
+                    goto err;
+                continue;
+            }
             cur_word++;
             if (strcmp(tik->data.word, tok->data.word) != 0) {
                 if ((res = tokens_append(res, tok, f->table, REPLACE)) == NULL)
@@ -59,13 +67,16 @@ s_node * plsc(follow *f, const char *filename)
         }
     }
     while (cur_word < cur->nb_word) {
-        if ((tok = cur->tokenize_text[j++])->type != WORD) continue;
+        if ((tok = cur->tokenize_text[j++])->type != WORD) {
+            if ((res = tokens_append(res, tok, f->table, tok->type)) == NULL)
+                goto err;
+            continue;
+        }
         if ((res = tokens_append(res, tok, f->table, INSERT)) == NULL)
             goto err;
         cur_word++;
     }
 err:
-    free(cur);
     return res;
 }
 
@@ -101,19 +112,23 @@ void display_tokens(s_node *tokens)
     token *t;
     for (n = tokens; n; n = n->next) {
         t = (token *) n->data;
-        switch (t->type) {
-            case WORD:
-            case ERASE:
-                printf(ANSI_COLOR_RED);
-                break;
-            case REPLACE:
-                printf(ANSI_COLOR_BLUE);
-                break;
-            case INSERT:
-                printf(ANSI_COLOR_GREEN);
-                break;
+        if (t->type == SPACE || t->type == SHORT_SPACE) {
+            printf("%s", t->data.space);
+        } else {
+            switch (t->type) {
+                case WORD:
+                case ERASE:
+                    printf(ANSI_COLOR_RED);
+                    break;
+                case REPLACE:
+                    printf(ANSI_COLOR_BLUE);
+                    break;
+                case INSERT:
+                    printf(ANSI_COLOR_GREEN);
+                    break;
+            }
+            printf("%s%s", t->data.word, ANSI_COLOR_RESET);
         }
-        printf("%s%s ", t->data.word, ANSI_COLOR_RESET);
     }
     putchar('\n');
 }

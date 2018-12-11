@@ -11,6 +11,7 @@ int main(int argc, char const *argv[])
     char str_err[BUFFER_MAX];
     follow *f;
     s_node *tokens;
+    text *cur;
     struct stat st;
 
     if (argc != 3) {
@@ -29,13 +30,15 @@ int main(int argc, char const *argv[])
         sprintf(str_err, "Erreur lors la création de follow");
         goto err;
     }
-    if ((tokens = plsc(f, argv[2])) == NULL) {
+    cur = text_load(argv[2]);
+    if ((tokens = plsc(f, cur)) == NULL) {
         sprintf(str_err, "Erreur lors de la fonction plsc");
         goto err;
     }
     display_tokens(tokens);
     destroy_tokens(tokens);
     follow_destroy(f);
+    text_destroy(cur);
     return 0;
 err:
     fprintf(stderr, "%s\n", str_err);
