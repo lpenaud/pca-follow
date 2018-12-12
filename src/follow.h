@@ -37,8 +37,8 @@ typedef struct {
 
 //  structure décrivant une instance de follow
 typedef struct {
-    strhash_table table;
-    text * pTextRef;
+    strhash_table *table;
+    text *pTextRef;
 } follow;
 
 text * text_load(const char *filename);
@@ -53,6 +53,12 @@ void display_matrix(int **matrix, const unsigned int nl, const unsigned int nc);
 
 // PLSC -> Plus Longue sous Séquence Commune
 int ** plsc(text *ref, text *cur);
+
+follow * create_follow(text *ref, text *cur);
+
+void display_follow(follow *f);
+
+void follow_destroy(follow *f);
 
 token * next_token_get(char *text, strhash_table *ht, int *offset);
 

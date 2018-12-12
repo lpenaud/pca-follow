@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "hachage.h"
 #include "follow.h"
 
 text * text_load(const char *filename)
@@ -23,8 +24,8 @@ text * text_load(const char *filename)
         return NULL;
     }
 
-    content->txt_len = 1;
-    while (fgets(buffer, BUFFER_MAX, fp) != NULL)  {
+    content->txt_len = 0;
+    while (fgets(buffer, BUFFER_MAX, fp) != NULL) {
         content->txt_len += strlen(buffer);
         tmp = (char *) realloc(content->txt, sizeof(char) * (content->txt_len + 2));
         if (tmp == NULL) {
@@ -38,6 +39,7 @@ text * text_load(const char *filename)
         strcat(content->txt, buffer);
     }
     fclose(fp);
+
 
     if ((content->tokenize_text = (token **) malloc(sizeof(token *))) == NULL) {
         free(content->txt);
@@ -202,6 +204,73 @@ int ** plsc(text *ref, text *cur)
         }
     }
     return lg;
+}
+
+void follow_plsc(follow *f, text *cur, int **lg, char *w, int i, int j)
+{
+    if (i > 0 && j > 0) {
+        if (f->pTextRef->txt[i-1] == cur->txt[j-1]) {
+            unsigned int s = strlen(w);
+            w[s] = f->pTextRef->txt[i-1];
+            w[s+1] = '\0';
+            if ((int) strlen(w) == lg[f->pTextRef->txt_len-1][cur->txt_len-1]) {
+                strhash_table_add(f->table, w);
+            }
+            follow_plsc(f, cur, lg, w, i-1, j-1);
+            w[s] = '\0';
+        } else if (lg[i-1][j] > lg[i][j-1]) {
+            follow_plsc(f, cur, lg, w, i-1, j);
+        } else if (lg[i-1][j] < lg[i][j-1]) {
+            follow_plsc(f, cur, lg, w, i, j-1);
+        } else {
+            follow_plsc(f, cur, lg, w, i-1, j);
+            follow_plsc(f, cur, lg, w, i, j-1);
+        }
+    }
+    return;
+}
+
+follow * create_follow(text *ref, text *cur)
+{
+    follow *f = (follow *) malloc(sizeof(follow));
+    if (f == NULL) return NULL;
+    char *w = (char *) malloc(sizeof(char) * MAX(ref->txt_len, cur->txt_len));
+    if (w == NULL) {
+        free(f);
+        return NULL;
+    }
+    w[0] = '\0';
+    int **lg = plsc(ref, cur);
+    if (lg == NULL) {
+        free(f);
+        free(w);
+        return NULL;
+    }
+
+    f->pTextRef = ref;
+    f->table = strhash_table_init(MAX(ref->txt_len, cur->txt_len));
+    display_matrix(lg, ref->txt_len, cur->txt_len);
+    follow_plsc(f, cur, lg, w, ref->txt_len-1, cur->txt_len-1);
+
+    free_matrix(lg, ref->txt_len);
+    return f;
+}
+
+void follow_destroy(follow *f)
+{
+    if (f->pTextRef != NULL) {
+        free(f->pTextRef);
+    }
+    free(f->table);
+    free(f);
+}
+
+void display_follow(follow *f)
+{
+    printf("# follow (%p)\n\n", f);
+    display_text(f->pTextRef);
+    putchar('\n');
+    strhash_print(f->table);
 }
 
 void display_text(text *content)
