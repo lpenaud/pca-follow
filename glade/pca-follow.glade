@@ -83,6 +83,7 @@ Aide à la comparaison de deux textes</property>
                         <property name="label">gtk-open</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
                         <signal name="activate" handler="open_ref" swapped="no"/>
                       </object>
@@ -232,7 +233,7 @@ Aide à la comparaison de deux textes</property>
                 <property name="min_content_width">400</property>
                 <property name="min_content_height">400</property>
                 <child>
-                  <object class="GtkTextView">
+                  <object class="GtkTextView" id="TextRef">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="editable">False</property>
@@ -253,7 +254,7 @@ Aide à la comparaison de deux textes</property>
                 <property name="min_content_width">400</property>
                 <property name="min_content_height">400</property>
                 <child>
-                  <object class="GtkTextView">
+                  <object class="GtkTextView" id="TextCur">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="editable">False</property>
@@ -271,6 +272,40 @@ Aide à la comparaison de deux textes</property>
             <property name="expand">True</property>
             <property name="fill">True</property>
             <property name="position">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkBox">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="homogeneous">True</property>
+            <child>
+              <object class="GtkLabel" id="LabelRef">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="LabelCur">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">2</property>
           </packing>
         </child>
       </object>
