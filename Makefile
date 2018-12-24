@@ -15,6 +15,9 @@ else
 	@echo "Génération en mode release"
 endif
 
+window.out: bin/text.o bin/text.o bin/follow.o bin/hachage.o bin/liste.o bin/window.o
+	$(CC) -o $@ $^ $(LDFLAGS)
+
 test_follow.out: bin/text.o bin/test_follow.o bin/text.o bin/follow.o bin/hachage.o bin/liste.o
 	$(CC) -o $@ $^ $(LDFLAGS)
 
@@ -22,9 +25,6 @@ test_text.out: bin/test.o bin/text.o bin/test_text.o bin/hachage.o bin/liste.o
 	$(CC) -o $@ $^ $(LDFLAGS)
 
 test_hachage.out: bin/test.o bin/test_hachage.o bin/hachage.o bin/liste.o
-	$(CC) -o $@ $^ $(LDFLAGS)
-
-window.out: bin/window.o
 	$(CC) -o $@ $^ $(LDFLAGS)
 
 test_liste.out: bin/liste.o bin/test.o bin/test_liste.o
