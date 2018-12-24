@@ -8,12 +8,15 @@ ifeq ($(ENV),DEBUG)
 	CFLAGS += -Og
 endif
 
-all: test_hachage.out test_liste.out test_text.out
+all: test_hachage.out test_liste.out test_text.out test_follow.out
 ifeq ($(ENV),DEBUG)
 	@echo "Génération du mode DEBUG"
 else
 	@echo "Génération en mode release"
 endif
+
+test_follow.out: bin/text.o bin/test_follow.o bin/text.o bin/follow.o bin/hachage.o bin/liste.o
+	$(CC) -o $@ $^ $(LDFLAGS)
 
 test_text.out: bin/test.o bin/text.o bin/test_text.o bin/hachage.o bin/liste.o
 	$(CC) -o $@ $^ $(LDFLAGS)
