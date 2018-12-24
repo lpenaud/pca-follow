@@ -1,7 +1,11 @@
 #include <gtk/gtk.h>
 
+#include "follow.h"
+
 GtkBuilder *builder = NULL;
 GtkWidget *main_window = NULL;
+follow *f = NULL;
+s_node *tokens = NULL;
 
 char * show_dialog_file(void)
 {
@@ -35,18 +39,51 @@ char * show_dialog_file(void)
 
 void open_ref(void)
 {
-    char *filename = show_dialog_file();
+    char *filename;
+    GtkWidget *label, *text;
+    label = GTK_WIDGET(gtk_builder_get_object(builder, "LabelRef"));
+    text = GTK_WIDGET(gtk_builder_get_object(builder, "TextRef"));
+    filename = show_dialog_file();
     if (filename == NULL) return;
-    printf("Filename : %s\n", filename);
+    if (f != NULL) {
+        follow_destroy(f);
+    }
+    f = create_follow(filename);
+    gtk_label_set_text(GTK_LABEL(label), filename);
+    gtk_text_buffer_set_text(
+        gtk_text_view_get_buffer(GTK_TEXT_VIEW(text)),
+        f->pTextRef->txt,
+        f->pTextRef->txt_len
+    );
     g_free(filename);
     return;
 }
 
 void open_cur(void)
 {
-    char *filename = show_dialog_file();
-    if (filename == NULL) return;
-    printf("Filename : %s\n", filename);
+    text *cur;
+    char *filename;
+    GtkWidget *label, *text;
+    label = GTK_WIDGET(gtk_builder_get_object(builder, "LabelCur"));
+    text = GTK_WIDGET(gtk_builder_get_object(builder, "TextCur"));
+    if (f == NULL) {
+        return;
+    }
+    if ((filename = show_dialog_file()) == NULL) return;
+    if (tokens != NULL) {
+        destroy_tokens(tokens);
+        strhash_table_free(f->table);
+    }
+    cur = text_load(filename);
+    tokens = plsc(f, cur);
+    gtk_label_set_text(GTK_LABEL(label), filename);
+    gtk_text_buffer_set_text(
+        gtk_text_view_get_buffer(GTK_TEXT_VIEW(text)),
+        cur->txt,
+        cur->txt_len
+    );
+    free(cur);
+    destroy_tokens(tokens);
     g_free(filename);
     return;
 }
