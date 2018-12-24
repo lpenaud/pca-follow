@@ -16,7 +16,7 @@ typedef struct {
 } follow;
 
 // PLSC -> Plus Longue sous Séquence Commune
-s_node * plsc(follow *f, const char *filename);
+s_node * plsc(follow *f, text *cur);
 
 follow * create_follow(const char *filename);
 

@@ -26,10 +26,10 @@ err:
     return NULL;
 }
 
-s_node * plsc(follow *f, const char *filename)
+s_node * plsc(follow *f, text *cur)
 {
     if (f == NULL) return NULL;
-    text *ref = f->pTextRef, *cur = text_load(filename);
+    text *ref = f->pTextRef;
     if (ref == NULL || cur == NULL) return NULL;
     unsigned int i, j, ref_word, cur_word;
     token *tik, *tok;
@@ -65,7 +65,6 @@ s_node * plsc(follow *f, const char *filename)
         cur_word++;
     }
 err:
-    free(cur);
     return res;
 }
 
