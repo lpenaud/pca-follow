@@ -33,6 +33,8 @@ typedef struct {
     unsigned int txt_len, nb_token, nb_word, nb_short_space, nb_space, nb_erase, nb_insert, nb_replace, nb_empty;
 } text;
 
+token * add_token(text *txt, int index, int len, enum token_type type);
+
 text * text_load(const char *filename);
 
 void text_destroy(text *content);
