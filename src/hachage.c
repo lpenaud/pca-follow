@@ -75,7 +75,6 @@ strhash_table * strhash_table_destroy(strhash_table * table)
     for (i = 0; i < table->len; i++) {
         list = table->list + i;
         for (node = list->node; node != NULL; node = node->next) {
-//            printf("%s\n", node->data);
             free(node->data);
         }
         list_destroy(list->node);
