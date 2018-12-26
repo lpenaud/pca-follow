@@ -1,11 +1,12 @@
 #include <gtk/gtk.h>
+#include <sys/stat.h>
+#include <errno.h>
 
 #include "follow.h"
 
 GtkBuilder *builder = NULL;
 GtkWidget *main_window = NULL;
 follow *f = NULL;
-s_node *tokens = NULL;
 
 char * show_dialog_file(void)
 {
@@ -37,13 +38,11 @@ char * show_dialog_file(void)
     return NULL;
 }
 
-void open_ref(void)
+void create_ref(char *filename)
 {
-    char *filename;
     GtkWidget *label, *text;
     label = GTK_WIDGET(gtk_builder_get_object(builder, "LabelRef"));
     text = GTK_WIDGET(gtk_builder_get_object(builder, "TextRef"));
-    filename = show_dialog_file();
     if (filename == NULL) return;
     if (f != NULL) {
         follow_destroy(f);
@@ -55,27 +54,22 @@ void open_ref(void)
         f->pTextRef->txt,
         f->pTextRef->txt_len
     );
-    g_free(filename);
     return;
 }
 
-void open_cur(void)
+void create_cur(char *filename)
 {
+    if (f == NULL) return;
     text *cur;
-    char *filename, tag_name[BUFFER_MAX];
+    char tag_name[BUFFER_MAX], *content;
     GtkWidget *label, *text;
     GtkTextIter start, end;
     GtkTextBuffer *buf;
+    s_node *n, *tokens;
+    token *t;
+    unsigned int i = 0, len;
     label = GTK_WIDGET(gtk_builder_get_object(builder, "LabelCur"));
     text = GTK_WIDGET(gtk_builder_get_object(builder, "TextCur"));
-    if (f == NULL) {
-        return;
-    }
-    if ((filename = show_dialog_file()) == NULL) return;
-    if (tokens != NULL) {
-        destroy_tokens(tokens);
-        strhash_table_free(f->table);
-    }
     cur = text_load(filename);
     tokens = plsc(f, cur);
     gtk_label_set_text(GTK_LABEL(label), filename);
@@ -87,12 +81,9 @@ void open_cur(void)
     // Modification de TextViewRef
     text = GTK_WIDGET(gtk_builder_get_object(builder, "TextRef"));
     buf = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text));
-    char *content;
-    unsigned int i = 0, len;
-    s_node *n = tokens;
-    token *t;
     tag_name[0] = '\0';
     gtk_text_buffer_get_bounds(buf, &start, &end);
+    n = tokens;
     do {
         t = (token *) n->data;
         len = strlen(t->data.word);
@@ -126,8 +117,29 @@ void open_cur(void)
     gtk_text_buffer_get_iter_at_offset(buf, &start, i);
     gtk_text_buffer_get_end_iter(buf, &end);
     gtk_text_buffer_delete(buf, &start, &end);
-    free(cur);
     destroy_tokens(tokens);
+    return;
+}
+
+void open_ref(void)
+{
+    char *filename;
+    filename = show_dialog_file();
+    if (filename == NULL) return;
+    create_ref(filename);
+    g_free(filename);
+    return;
+}
+
+
+void open_cur(void)
+{
+    char *filename;
+    if (f == NULL) {
+        return;
+    }
+    if ((filename = show_dialog_file()) == NULL) return;
+    create_cur(filename);
     g_free(filename);
     return;
 }
@@ -144,7 +156,7 @@ int main (int argc, char *argv[])
     GError *error = NULL;
     gchar *filename = NULL;
     GtkTextBuffer *buf;
-
+    struct stat st;
 
     // Initialisation de la librairie Gtk
     gtk_init(&argc, &argv);
@@ -180,7 +192,22 @@ int main (int argc, char *argv[])
     // Affichage de la fenêtre principale
     gtk_widget_show_all(main_window);
 
-    gtk_main();
+    if (argc >= 2) {
+        if (stat(argv[1], &st) == -1) {
+            fprintf(stderr, "%s - %s\n", argv[1], strerror(errno));
+            return -1;
+        }
+        create_ref(argv[1]);
+    }
+    if (argc == 3) {
+        if (stat(argv[2], &st) == -1) {
+            fprintf(stderr, "%s - %s\n", argv[2], strerror(errno));
+            return -1;
+        }
+        create_cur(argv[2]);
+    }
 
+    gtk_main();
+    if (f != NULL) free(f);
     return 0;
 }
