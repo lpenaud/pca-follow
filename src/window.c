@@ -62,8 +62,10 @@ void open_ref(void)
 void open_cur(void)
 {
     text *cur;
-    char *filename;
+    char *filename, tag_name[BUFFER_MAX];
     GtkWidget *label, *text;
+    GtkTextIter start, end;
+    GtkTextBuffer *buf;
     label = GTK_WIDGET(gtk_builder_get_object(builder, "LabelCur"));
     text = GTK_WIDGET(gtk_builder_get_object(builder, "TextCur"));
     if (f == NULL) {
@@ -82,6 +84,48 @@ void open_cur(void)
         cur->txt,
         cur->txt_len
     );
+    // Modification de TextViewRef
+    text = GTK_WIDGET(gtk_builder_get_object(builder, "TextRef"));
+    buf = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text));
+    char *content;
+    unsigned int i = 0, len;
+    s_node *n = tokens;
+    token *t;
+    tag_name[0] = '\0';
+    gtk_text_buffer_get_bounds(buf, &start, &end);
+    do {
+        t = (token *) n->data;
+        len = strlen(t->data.word);
+        gtk_text_buffer_get_start_iter(buf, &start);
+        gtk_text_buffer_get_end_iter(buf, &end);
+        content = gtk_text_buffer_get_text(buf, &start, &end, FALSE);
+        while (content[i] && content[i] == ' ')
+            i++;
+        gtk_text_buffer_get_iter_at_offset(buf, &start, i);
+        if (t->type == WORD || t->type == EMPTY) {
+            gtk_text_buffer_get_iter_at_offset(buf, &end, i + len);
+            gtk_text_buffer_delete(buf, &start, &end);
+        }
+        switch (t->type) {
+            case WORD:
+            case ERASE:
+                strcpy(tag_name, "erase");
+                break;
+            case REPLACE:
+                strcpy(tag_name, "replace");
+                break;
+            case INSERT:
+                strcpy(tag_name, "insert");
+                break;
+            default:
+                tag_name[0] = '\0';
+        }
+        gtk_text_buffer_insert_with_tags_by_name(buf, &start, t->data.word, len, tag_name, NULL);
+        i += len;
+    } while((n = n->next) != NULL);
+    gtk_text_buffer_get_iter_at_offset(buf, &start, i);
+    gtk_text_buffer_get_end_iter(buf, &end);
+    gtk_text_buffer_delete(buf, &start, &end);
     free(cur);
     destroy_tokens(tokens);
     g_free(filename);
@@ -99,6 +143,8 @@ int main (int argc, char *argv[])
 {
     GError *error = NULL;
     gchar *filename = NULL;
+    GtkTextBuffer *buf;
+
 
     // Initialisation de la librairie Gtk
     gtk_init(&argc, &argv);
@@ -116,6 +162,14 @@ int main (int argc, char *argv[])
         g_error_free(error);
         return code;
     }
+
+    // Création des tags
+    buf = gtk_text_view_get_buffer(
+        GTK_TEXT_VIEW(gtk_builder_get_object(builder, "TextRef"))
+    );
+    gtk_text_buffer_create_tag(buf, "erase", "background", "red", NULL);
+    gtk_text_buffer_create_tag(buf, "insert", "background", "green", NULL);
+    gtk_text_buffer_create_tag(buf, "replace", "background", "blue", NULL);
 
     // Récupération du pointeur de la fenêtre principale
     main_window = GTK_WIDGET(gtk_builder_get_object(builder, "MainWindow"));
