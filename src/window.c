@@ -57,66 +57,71 @@ void create_ref(char *filename)
     return;
 }
 
+int process_diff(s_node *node, void * param)
+{
+    char tag_name[BUFFER_MAX];
+    GtkTextIter end;
+    token *t = (token *) node->data;
+    GtkTextBuffer *buf = GTK_TEXT_BUFFER(param);
+    gtk_text_buffer_get_end_iter(buf, &end);
+    tag_name[0] = '\0';
+    if (t->type == SPACE || t->type == SHORT_SPACE) {
+        gtk_text_buffer_insert(
+            buf,
+            &end,
+            t->data.space,
+            strlen(t->data.space)
+        );
+        return 0;
+    }
+    switch (t->type) {
+        case WORD:
+        case ERASE:
+            strcpy(tag_name, "red_bg");
+            break;
+        case REPLACE:
+            strcpy(tag_name, "blue_bg");
+            break;
+        case INSERT:
+            strcpy(tag_name, "green_bg");
+            break;
+        default:
+            tag_name[0] = '\0';
+    }
+    gtk_text_buffer_insert_with_tags_by_name(
+        buf,
+        &end,
+        t->data.word,
+        strlen(t->data.word),
+        tag_name,
+        NULL
+    );
+    return 0;
+}
+
 void create_cur(char *filename)
 {
     if (f == NULL) return;
     text *cur;
-    char tag_name[BUFFER_MAX], *content;
-    GtkWidget *label, *text;
     GtkTextIter start, end;
     GtkTextBuffer *buf;
-    s_node *n, *tokens;
-    token *t;
-    unsigned int i = 0, len;
-    label = GTK_WIDGET(gtk_builder_get_object(builder, "LabelCur"));
-    text = GTK_WIDGET(gtk_builder_get_object(builder, "TextCur"));
+    s_node *tokens, **last = NULL;
     cur = text_load(filename);
     tokens = plsc(f, cur);
-    gtk_label_set_text(GTK_LABEL(label), filename);
-    gtk_text_buffer_set_text(
-        gtk_text_view_get_buffer(GTK_TEXT_VIEW(text)),
-        cur->txt,
-        cur->txt_len
+    gtk_label_set_text(
+        GTK_LABEL(GTK_WIDGET(gtk_builder_get_object(builder, "LabelCur"))),
+        filename
     );
-    // Modification de TextViewRef
-    text = GTK_WIDGET(gtk_builder_get_object(builder, "TextRef"));
-    buf = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text));
-    tag_name[0] = '\0';
+    buf = gtk_text_view_get_buffer(
+        GTK_TEXT_VIEW(gtk_builder_get_object(builder, "TextCur"))
+    );
+    gtk_text_buffer_set_text(buf, cur->txt, cur->txt_len);
+    buf = gtk_text_view_get_buffer(
+        GTK_TEXT_VIEW(gtk_builder_get_object(builder, "TextRef"))
+    );
     gtk_text_buffer_get_bounds(buf, &start, &end);
-    n = tokens;
-    do {
-        t = (token *) n->data;
-        len = strlen(t->data.word);
-        gtk_text_buffer_get_start_iter(buf, &start);
-        gtk_text_buffer_get_end_iter(buf, &end);
-        content = gtk_text_buffer_get_text(buf, &start, &end, FALSE);
-        while (content[i] && content[i] == ' ')
-            i++;
-        gtk_text_buffer_get_iter_at_offset(buf, &start, i);
-        if (t->type == WORD || t->type == EMPTY) {
-            gtk_text_buffer_get_iter_at_offset(buf, &end, i + len);
-            gtk_text_buffer_delete(buf, &start, &end);
-        }
-        switch (t->type) {
-            case WORD:
-            case ERASE:
-                strcpy(tag_name, "erase");
-                break;
-            case REPLACE:
-                strcpy(tag_name, "replace");
-                break;
-            case INSERT:
-                strcpy(tag_name, "insert");
-                break;
-            default:
-                tag_name[0] = '\0';
-        }
-        gtk_text_buffer_insert_with_tags_by_name(buf, &start, t->data.word, len, tag_name, NULL);
-        i += len;
-    } while((n = n->next) != NULL);
-    gtk_text_buffer_get_iter_at_offset(buf, &start, i);
-    gtk_text_buffer_get_end_iter(buf, &end);
     gtk_text_buffer_delete(buf, &start, &end);
+    list_process(tokens, &process_diff, buf, last);
     destroy_tokens(tokens);
     return;
 }
@@ -130,7 +135,6 @@ void open_ref(void)
     g_free(filename);
     return;
 }
-
 
 void open_cur(void)
 {
@@ -148,6 +152,15 @@ void show_about(void)
 {
     GtkWidget *about = GTK_WIDGET(gtk_builder_get_object(builder, "AboutDialog"));
     gtk_dialog_run(GTK_DIALOG(about));
+    return;
+}
+
+void scroll_event(
+    GtkScrolledWindow *ref,
+    GtkScrollType scroll,
+    gboolean horizontal,
+    gpointer user_data)
+{
     return;
 }
 
@@ -179,9 +192,9 @@ int main (int argc, char *argv[])
     buf = gtk_text_view_get_buffer(
         GTK_TEXT_VIEW(gtk_builder_get_object(builder, "TextRef"))
     );
-    gtk_text_buffer_create_tag(buf, "erase", "background", "red", NULL);
-    gtk_text_buffer_create_tag(buf, "insert", "background", "green", NULL);
-    gtk_text_buffer_create_tag(buf, "replace", "background", "blue", NULL);
+    gtk_text_buffer_create_tag(buf, "red_bg", "background", "red", NULL);
+    gtk_text_buffer_create_tag(buf, "green_bg", "background", "green", NULL);
+    gtk_text_buffer_create_tag(buf, "blue_bg", "background", "blue", NULL);
 
     // Récupération du pointeur de la fenêtre principale
     main_window = GTK_WIDGET(gtk_builder_get_object(builder, "MainWindow"));
