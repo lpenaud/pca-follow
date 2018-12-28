@@ -11,7 +11,7 @@
     <property name="comments" translatable="yes">Logiciel de suivi a posteriori des modifcations documentaires
 Aide à la comparaison de deux textes</property>
     <property name="website">https://github.com/lpenaud/pca-follow/tree/master</property>
-    <property name="website_label" translatable="yes">Github</property>
+    <property name="website_label">Github</property>
     <property name="authors">Loïc Penaud</property>
     <property name="logo_icon_name">accessories-text-editor</property>
     <signal name="close" handler="gtk_widget_destroy" swapped="no"/>
@@ -226,7 +226,7 @@ Aide à la comparaison de deux textes</property>
             <property name="spacing">10</property>
             <property name="homogeneous">True</property>
             <child>
-              <object class="GtkScrolledWindow">
+              <object class="GtkScrolledWindow" id="ScrollRef">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="shadow_type">in</property>
@@ -247,7 +247,7 @@ Aide à la comparaison de deux textes</property>
               </packing>
             </child>
             <child>
-              <object class="GtkScrolledWindow">
+              <object class="GtkScrolledWindow" id="ScrollCur">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="shadow_type">in</property>

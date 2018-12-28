@@ -155,12 +155,12 @@ void show_about(void)
     return;
 }
 
-void scroll_event(
-    GtkScrolledWindow *ref,
-    GtkScrollType scroll,
-    gboolean horizontal,
-    gpointer user_data)
+void scrolling(GtkAdjustment *ref_ajust, gpointer user_data)
 {
+    GtkAdjustment *cur_ajust = gtk_scrolled_window_get_vadjustment(
+        GTK_SCROLLED_WINDOW(gtk_builder_get_object(builder, "ScrollCur"))
+    );
+    gtk_adjustment_set_value(cur_ajust, gtk_adjustment_get_value(ref_ajust));
     return;
 }
 
@@ -168,7 +168,7 @@ int main (int argc, char *argv[])
 {
     GError *error = NULL;
     gchar *filename = NULL;
-    GtkTextBuffer *buf;
+    GtkTextBuffer *ref_buf, *cur_buf;
     struct stat st;
 
     // Initialisation de la librairie Gtk
@@ -189,32 +189,45 @@ int main (int argc, char *argv[])
     }
 
     // Création des tags
-    buf = gtk_text_view_get_buffer(
+    ref_buf = gtk_text_view_get_buffer(
         GTK_TEXT_VIEW(gtk_builder_get_object(builder, "TextRef"))
     );
-    gtk_text_buffer_create_tag(buf, "red_bg", "background", "red", NULL);
-    gtk_text_buffer_create_tag(buf, "green_bg", "background", "green", NULL);
-    gtk_text_buffer_create_tag(buf, "blue_bg", "background", "blue", NULL);
+    cur_buf = gtk_text_view_get_buffer(
+        GTK_TEXT_VIEW(gtk_builder_get_object(builder, "TextCur"))
+    );
+    gtk_text_buffer_create_tag(ref_buf, "red_bg", "background", "red", NULL);
+    gtk_text_buffer_create_tag(ref_buf, "green_bg", "background", "green", NULL);
+    gtk_text_buffer_create_tag(ref_buf, "blue_bg", "background", "blue", NULL);
 
     // Récupération du pointeur de la fenêtre principale
     main_window = GTK_WIDGET(gtk_builder_get_object(builder, "MainWindow"));
 
     // Affectation des signals
     gtk_builder_connect_signals(builder, NULL);
+    // gtk_widget_add_events(GTK_WIDGET(gtk_builder_get_object(builder, "ScrollRef")), GDK_SCROLL_MASK);
+
+    g_signal_connect(
+        gtk_scrolled_window_get_vadjustment(
+            GTK_SCROLLED_WINDOW(gtk_builder_get_object(builder, "ScrollRef"))
+        ),
+            "value-changed",
+            G_CALLBACK(scrolling),
+            NULL
+    );
 
     // Affichage de la fenêtre principale
     gtk_widget_show_all(main_window);
 
     if (argc >= 2) {
         if (stat(argv[1], &st) == -1) {
-            fprintf(stderr, "%s - %s\n", argv[1], strerror(errno));
+            g_error(strerror(errno));
             return -1;
         }
         create_ref(argv[1]);
     }
     if (argc == 3) {
         if (stat(argv[2], &st) == -1) {
-            fprintf(stderr, "%s - %s\n", argv[2], strerror(errno));
+            g_error(strerror(errno));
             return -1;
         }
         create_cur(argv[2]);
