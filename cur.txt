@@ -19,7 +19,7 @@ GTK_FILE_CHOOSER_ACTION_OPEN
 Affectation
 
 
-ui
+oui
 
 
 non
@@ -45,16 +45,6 @@ fait
 
 non
 
-mdr
-
-ta
-
-le
-
-
-suem
-
-
 n'est-ce-pas
 
 
@@ -65,3 +55,4 @@ c'est
 
 
 vrai
+

@@ -155,12 +155,21 @@ void show_about(void)
     return;
 }
 
-void scrolling(GtkAdjustment *ref_ajust)
+void scrolling_ref(GtkAdjustment *ref_ajust)
 {
     GtkAdjustment *cur_ajust = gtk_scrolled_window_get_vadjustment(
         GTK_SCROLLED_WINDOW(gtk_builder_get_object(builder, "ScrollCur"))
     );
     gtk_adjustment_set_value(cur_ajust, gtk_adjustment_get_value(ref_ajust));
+    return;
+}
+
+void scrolling_cur(GtkAdjustment *cur_ajust)
+{
+    GtkAdjustment *ref_ajust = gtk_scrolled_window_get_vadjustment(
+        GTK_SCROLLED_WINDOW(gtk_builder_get_object(builder, "ScrollRef"))
+    );
+    gtk_adjustment_set_value(ref_ajust, gtk_adjustment_get_value(cur_ajust));
     return;
 }
 
@@ -201,17 +210,23 @@ int main (int argc, char *argv[])
 
     // Affectation des signals
     gtk_builder_connect_signals(builder, NULL);
-    // gtk_widget_add_events(GTK_WIDGET(gtk_builder_get_object(builder, "ScrollRef")), GDK_SCROLL_MASK);
 
     g_signal_connect(
         gtk_scrolled_window_get_vadjustment(
             GTK_SCROLLED_WINDOW(gtk_builder_get_object(builder, "ScrollRef"))
         ),
             "value-changed",
-            G_CALLBACK(scrolling),
+            G_CALLBACK(scrolling_ref),
             NULL
     );
-
+    g_signal_connect(
+        gtk_scrolled_window_get_vadjustment(
+            GTK_SCROLLED_WINDOW(gtk_builder_get_object(builder, "ScrollCur"))
+        ),
+            "value-changed",
+            G_CALLBACK(scrolling_cur),
+            NULL
+    );
     // Affichage de la fenêtre principale
     gtk_widget_show_all(main_window);
 
